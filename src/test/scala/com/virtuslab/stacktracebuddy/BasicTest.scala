@@ -8,13 +8,18 @@ extension (n: Int)
     if math.random < n/10.0 then throw RuntimeException("error")
     n + n2
 
-
-
-
 class BasicTest:
+
   @Test 
   def stacktraceTest(): Unit = 
     try
-      (0 to 10).map { n => n ! n ! n }
+      val x = (0 to 10).map { 
+        n => List(n).map { n => n ! n ! n }.head 
+      }
     catch
-      case e: Exception => e.getStackTrace.foreach(println)
+      case e: Exception => 
+        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e.getStackTrace)
+        // PrettyStackTracePrinter.print(prettyStackTrace)
+        e.getStackTrace.foreach(println)
+
+object BasicTest
