@@ -1,1 +1,2 @@
-# stacktrace-buddy
+# StacktraceBuddy
+
