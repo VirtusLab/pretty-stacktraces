@@ -14,9 +14,8 @@ object StackTraceBuddy:
 
   private val rootPath = Paths.get("target", "scala-3.0.0-RC2", "test-classes")
 
-  def convertToPrettyStackTrace(st: Array[StackTraceElement]): List[PrettyStackTrace] = 
-
-    st.map { ste =>
+  def convertToPrettyStackTrace(e: Exception): PrettyException = 
+    val st = e.getStackTrace.map { ste =>
       val classFile = ste.getClassName
       val classPath = classFile.stripSuffix("$").split("\\.")
       
@@ -32,6 +31,7 @@ object StackTraceBuddy:
       else
         PrettyStackTrace(ste, "")
     }.toList
+    PrettyException(e, st)
 
   private class StackTraceBuddyInspector(ste: StackTraceElement) extends Inspector:
     var prettyStackTrace: PrettyStackTrace = null
@@ -54,8 +54,9 @@ object StackTraceBuddy:
             // println((name, ste.getMethodName.split("\\$").head, ste))
 
             if name == decoded.toString then
-              // println(d)
-              prettyStackTrace = PrettyStackTrace(ste, "method")
+              println(label(d))
+              println(d.pos.sourceFile.jpath)
+              prettyStackTrace = PrettyStackTrace(ste, label(d))
             else if name == "stacktraceTest" then
               matchTerm(rhs.get)
             else if name == "$anonfun" then
@@ -83,6 +84,9 @@ object StackTraceBuddy:
         case x => 
 
 
+      def label(tree: Tree): String =  tree.symbol match
+        case s if s.flags.is(Flags.ExtensionMethod) => "extension method"
+        case _ => "method"
 
 
 

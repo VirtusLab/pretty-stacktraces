@@ -18,8 +18,8 @@ class BasicTest:
       }
     catch
       case e: Exception => 
-        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e.getStackTrace)
-        // PrettyStackTracePrinter.print(prettyStackTrace)
-        e.getStackTrace.foreach(println)
+        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
+        PrettyExceptionPrinter.print(prettyStackTrace)
+        // e.getStackTrace.foreach(println)
 
 object BasicTest
