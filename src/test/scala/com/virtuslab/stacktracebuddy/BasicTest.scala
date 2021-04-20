@@ -1,7 +1,12 @@
 package com.virtuslab.stacktracebuddy
 
+import com.virtuslab.stacktracebuddy.core.StackTraceBuddy
+import com.virtuslab.stacktracebuddy.printer.PrettyExceptionPrinter
+
 import org.junit.Test
 import org.junit.Assert._
+
+import java.net.URLClassLoader
 
 extension (n: Int)
   def !(n2: Int): Int =
@@ -21,5 +26,3 @@ class BasicTest:
         val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
         PrettyExceptionPrinter.print(prettyStackTrace)
         // e.getStackTrace.foreach(println)
-
-object BasicTest
