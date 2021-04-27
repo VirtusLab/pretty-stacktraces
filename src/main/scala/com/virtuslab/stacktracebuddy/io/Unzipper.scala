@@ -10,10 +10,7 @@ import java.util.Map.entry
 
 object Unzipper:
 
-  def unzipFiles(jars: List[File]): List[File] =
-    jars.map(unzipFileToTempDirectory)
-
-  private def unzipFileToTempDirectory(file: File): File =
+  def unzipFile(file: File): File =
     val destDir = Files.createTempDirectory(file.getName + "_sources");
     val fileInputStream = FileInputStream(file)
     val input = ZipInputStream(fileInputStream)

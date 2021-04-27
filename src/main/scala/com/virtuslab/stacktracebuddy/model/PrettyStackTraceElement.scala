@@ -5,4 +5,11 @@ enum ElementType(val name: String):
   case ExtensionMethod extends ElementType("extension method")
   case Lambda(val tpe: String, parent: String) extends ElementType("labmda")
 
-case class PrettyStackTraceElement(original: StackTraceElement, elementType: ElementType, prettyName: String, prettyFile: String)
+case class PrettyStackTraceElement(
+  original: StackTraceElement,
+  elementType: ElementType, 
+  prettyName: String, 
+  prettyFile: String, 
+  lineNumber: Int,
+  jarName: Option[String] = None
+)

@@ -18,11 +18,17 @@ class BasicTest:
   @Test 
   def stacktraceTest(): Unit = 
     try
-      val x = (0 to 10).map { 
-        n => List(n).map { n => n ! n ! n }.head 
+      val x = (0 to 10).flatMap { 
+        n => List(n).map { 
+          n => (if n > 5 then List(true) else List(false)).flatMap {
+            n => (if n then List("0") else List("5")).map {
+              n => n.toInt ! n.toInt ! n.toInt
+            }
+          }
+        } 
       }
     catch
       case e: Exception => 
         val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
-        PrettyExceptionPrinter.print(prettyStackTrace)
+        PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
         // e.getStackTrace.foreach(println)
