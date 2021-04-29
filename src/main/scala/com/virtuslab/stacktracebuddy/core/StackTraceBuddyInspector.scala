@@ -26,19 +26,30 @@ object StackTraceBuddyInspector:
 
 class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspector:
   private var prettyStackTrace: Option[PrettyStackTraceElement] = None
+  
   override def inspect(using q: Quotes)(tastys: List[Tasty[quotes.type]]): Unit =
     import q.reflect.*
-    for tasty <- tastys do
-      val tree = tasty.ast
-      val defdefs = walkInOrder(tree)
-      processDefDefs(defdefs)
-    
+
+    val ts = TypesSupport(q)
+
+    def label(d: DefDef): ElementType =  d.symbol match
+      case s if s.flags.is(Flags.ExtensionMethod) => ElementType.ExtensionMethod
+      case s if s.name == "$anonfun" => 
+        
+        val ownerName = s.owner.name
+        val parent = if ownerName == "$anonfun" then "some outer lambda" else ownerName
+        ElementType.Lambda(ts.toLambda(d.asInstanceOf[ts.qctx.reflect.DefDef]), parent)
+      case _ => ElementType.Method
+          
+    def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
+      Some(PrettyStackTraceElement(ste, label(d), d.name, d.pos.sourceFile.jpath.toString, lineNumber))
+
     def walkInOrder(tree: Tree): List[DefDef] =
       if tree.pos.startLine < ste.getLineNumber then
         visitTree(tree)
       else 
         Nil
-
+    
     def visitTree(tree: Tree): List[DefDef] =
       tree match
         case PackageClause(_, list) => 
@@ -147,14 +158,7 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
                   """.trim
                   throw IllegalStateException(excMsg)
 
-    def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
-      Some(PrettyStackTraceElement(ste, label(d), d.name, d.pos.sourceFile.jpath.toString, lineNumber))
-
-    def label(d: DefDef): ElementType =  d.symbol match
-      case s if s.flags.is(Flags.ExtensionMethod) => ElementType.ExtensionMethod
-      case s if s.name == "$anonfun" => 
-        val ts = TypesSupport(q)
-        val ownerName = s.owner.name
-        val parent = if ownerName == "$anonfun" then "some outer lambda" else ownerName
-        ElementType.Lambda(ts.toLambda(d.asInstanceOf[ts.qctx.reflect.DefDef]), parent)
-      case _ => ElementType.Method
+    for tasty <- tastys do
+      val tree = tasty.ast
+      val defdefs = walkInOrder(tree)
+      processDefDefs(defdefs)
