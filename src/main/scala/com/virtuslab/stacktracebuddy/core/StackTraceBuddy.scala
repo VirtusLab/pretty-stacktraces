@@ -21,13 +21,13 @@ object StackTraceBuddy:
   lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
   def convertToPrettyStackTrace(e: Exception): PrettyException =
-    val st = filterInternalStackFrames(e.getStackTrace).map { ste =>
+    val st = filterInternalStackFrames(e.getStackTrace).flatMap { ste =>
       val tastyFilesLocator = TastyFilesLocator(classpathDirectories)
       tastyFilesLocator.findTastyFile(ste.getClassName) match
         case Some(TastyWrapper(tastyFile, opJarName)) =>
-          StackTraceBuddyInspector.inspectStackTrace(ste, tastyFile).copy(jarName = opJarName)
+          StackTraceBuddyInspector.inspectStackTrace(ste, tastyFile).map(_.copy(jarName = opJarName))
         case None =>
-          PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber)
+          Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber))
     }.toList
     PrettyException(e, st)
 

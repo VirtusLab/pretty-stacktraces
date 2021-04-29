@@ -8,6 +8,18 @@ import org.junit.Assert._
 
 import java.net.URLClassLoader
 
+trait A:
+  def doSthA = doSthAInlined
+
+  @inline def doSthAInlined = throw IllegalStateException("doSthAInlined")
+
+  def doSth = doSthInlined
+
+  inline def doSthInlined = throw IllegalStateException("doSthInlined")
+
+class B extends A
+
+
 extension (n: Int)
   def !(n2: Int): Int =
     if math.random < n/10.0 then throw RuntimeException("error")
@@ -15,9 +27,18 @@ extension (n: Int)
 
 class BasicTest:
 
-  @Test 
-  def stacktraceTest(): Unit = 
+  private def executeTest(test: () => Unit) =
     try
+      test()
+    catch
+      case e: Exception =>
+        // e.getStackTrace.foreach(println) 
+        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
+        PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
+
+  @Test 
+  def nestedLambdas = 
+    executeTest { () =>
       val x = (0 to 10).flatMap { 
         n => List(n).map { 
           n => (if n > 5 then List(true) else List(false)).flatMap {
@@ -27,8 +48,12 @@ class BasicTest:
           }
         } 
       }
-    catch
-      case e: Exception => 
-        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
-        PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
-        // e.getStackTrace.foreach(println)
+    } 
+
+  @Test 
+  def BdoSth = 
+    executeTest(() => B().doSth)
+
+  @Test 
+  def BdoSthA = 
+    executeTest(() => B().doSthA)

@@ -18,14 +18,14 @@ import java.io.File
 
 
 object StackTraceBuddyInspector:
-  def inspectStackTrace(ste: StackTraceElement, tastyFile: File): PrettyStackTraceElement =
+  def inspectStackTrace(ste: StackTraceElement, tastyFile: File): Option[PrettyStackTraceElement] =
     val stackTraceBuddyInspector = StackTraceBuddyInspector(ste)
     TastyInspector.inspectTastyFiles(List(tastyFile.toString))(stackTraceBuddyInspector)
     stackTraceBuddyInspector.prettyStackTrace
 
 
 class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspector:
-  private var prettyStackTrace: PrettyStackTraceElement = null
+  private var prettyStackTrace: Option[PrettyStackTraceElement] = None
   override def inspect(using q: Quotes)(tastys: List[Tasty[quotes.type]]): Unit =
     import q.reflect.*
     for tasty <- tastys do
@@ -103,6 +103,8 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
           walkInOrder(term)
         case While(cond, body) =>
           walkInOrder(cond) ++ walkInOrder(body)
+        case _: TypeTree =>
+          Nil
         case x =>
           println(s"Unmatched param: $x")
           Nil
@@ -115,7 +117,7 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
           lambdas match
             case head :: Nil =>
               val ts = TypesSupport(q)
-              createPrettyStackTraceElement(head, decoded, head.pos.startLine + 1)
+              createPrettyStackTraceElement(head, head.pos.startLine + 1)
             case _ =>
               val excMsg = """
               | Too many nested lambdas in one line, cannot disambiguate. 
@@ -128,25 +130,25 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
               """.trim
               throw IllegalStateException(excMsg)
         case d =>
-          extension (sym: Symbol)
-            def packageName: String = 
-              if (sym.isPackageDef) sym.fullName
-              else sym.maybeOwner.packageName
-            def className: Option[String] =
-              if (sym.isClassDef && !sym.flags.is(Flags.Package)) Some(
-                Some(sym.maybeOwner).filter(s => s.exists).flatMap(_.className).fold("")(cn => cn + "$") + sym.name
-              ).filterNot(_.contains("package$"))
-              else if (sym.isPackageDef) None
-              else sym.maybeOwner.className
-              
           defdefs match
-            case head :: Nil if head.name == d.stripSuffix("$") || head.symbol.annotations.find(a => a.symbol.packageName == "scala" && a.symbol.className.contains("inline")).isDefined =>
-              createPrettyStackTraceElement(head, decoded, ste.getLineNumber)
-            case s =>
-              throw IllegalStateException(s"There should be only one function matching name $d, found ${s.size}")
+            case Nil =>
+              None
+            case head :: Nil =>
+              createPrettyStackTraceElement(head, ste.getLineNumber)
+            case _ => 
+              val fun = defdefs.filter(_.name == d)
+              fun match // This will probably fail for nested inline functions, though we cannot disambiguate them
+                case head :: Nil =>
+                  createPrettyStackTraceElement(head, ste.getLineNumber)
+                case defdefs =>
+                  val excMsg = s"""
+                  | Couldnt disambiguate function for this stack frame $ste, possible reasons:
+                  | - Nested inline function inside another function (due to name mangling they are hard to locate)
+                  """.trim
+                  throw IllegalStateException(excMsg)
 
-    def createPrettyStackTraceElement(d: DefDef, name: String, lineNumber: Int): PrettyStackTraceElement =
-      PrettyStackTraceElement(ste, label(d), name, d.pos.sourceFile.jpath.toString, lineNumber)
+    def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
+      Some(PrettyStackTraceElement(ste, label(d), d.name, d.pos.sourceFile.jpath.toString, lineNumber))
 
     def label(d: DefDef): ElementType =  d.symbol match
       case s if s.flags.is(Flags.ExtensionMethod) => ElementType.ExtensionMethod
