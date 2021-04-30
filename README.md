@@ -89,7 +89,7 @@ This is where StacktraceBuddy comes in. Let's try wrap our example inside this t
 After executing it with `sbt run` we get following output:
 
 <details>
-  <summary>Standard stacktrace</summary>
+  <summary>Prettified stacktrace</summary>
   
   ```
 sbt:stacktracebuddy> run
@@ -139,7 +139,7 @@ then we traverse the file to find `DefDef` defined in that line.
 
 ### Shortcomings of that solution
 
-The general problem is for nested functions with mangled names. Let's look at the below example, which can be found as [test](./src/test/scala/com/virtuslab/stacktracebuddy/BasicTest.scala) directory.
+The general problem is for nested functions with mangled names. Let's look at the below example, which can be found at [test](./src/test/scala/com/virtuslab/stacktracebuddy/BasicTest.scala) directory.
 
 ```scala
 private def executeTest(test: () => Unit) =
@@ -170,7 +170,7 @@ If we take a look at the prettified stacktrace, we get:
 
 ![](problem.png)
 
-the first lambda conting from the bottom of the stack trace is:
+the first lambda counting from the bottom of the stack trace is:
 
 ```
 at lambda (Int) => IterableOnce[List[Int]] of x in src/test/scala/com/virtuslab/stacktracebuddy/BasicTest.scala:42
@@ -182,7 +182,7 @@ which should actually be
 at lambda () => Unit of executeTest in src/test/scala/com/virtuslab/stacktracebuddy/BasicTest.scala:37
 ```
 
-The problem is, the original stack trace for that is as follows:
+The problem is, the original stack trace for that is:
 
 ```
 ...
@@ -197,7 +197,7 @@ com.virtuslab.stacktracebuddy.BasicTest.nestedLambdas(BasicTest.scala:50)
 ...
 ```
 
-We could try to use the name `nestedLambdas$$anonfun$1` for further disambiguation, but it's not general rule that lamba will have prefix of it's wrapping function, eventually
+We could try to use the name `nestedLambdas$$anonfun$1` for further disambiguation, but it's not general rule that lamba will have prefix of its wrapping function, eventually
 we always can end up with some hard to disambiguate problem.
 
 ### Further development
