@@ -17,7 +17,7 @@ object PrettyExceptionPrinter:
           add("    at ")
           elementType match
             case ElementType.Lambda(tpe, parent) =>
-              add("labmda ")
+              add("lambda ")
               addWithColor(AMBER)(tpe)
               add(s" of ${parent} ")
             case _ =>

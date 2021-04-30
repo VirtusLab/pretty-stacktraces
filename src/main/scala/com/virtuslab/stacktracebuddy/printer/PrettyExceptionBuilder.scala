@@ -2,9 +2,9 @@ package com.virtuslab.stacktracebuddy.printer
 
 import Console.RESET
 
-val RED = "\u001b[38;5;197m"
+val RED = "\u001b[38;5;203m"
 val LIGHT_ORANGE = "\u001b[38;5;215m"
-val GREEN = "\u001b[38;5;46m"
+val GREEN = "\u001b[38;5;120m"
 val AMBER = "\u001b[38;5;142m"
 val LIGHT_PURPLE = "\u001b[38;5;141m"
 

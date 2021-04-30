@@ -67,9 +67,9 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
             List(d)
           else
             Nil
-          defdef ++ walkInOrder(rhs.get)
+          defdef ++ rhs.fold(Nil)(walkInOrder)
         case ValDef(_, _, rhs) => 
-          walkInOrder(rhs.get)
+          rhs.fold(Nil)(walkInOrder)
         case Ident(_) =>
           Nil
         case Select(term, _) => 
@@ -127,7 +127,6 @@ class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspecto
           val lambdas = defdefs.filter(f => f.name == "$anonfun" && f.pos.endLine + 1 == ste.getLineNumber)
           lambdas match
             case head :: Nil =>
-              val ts = TypesSupport(q)
               createPrettyStackTraceElement(head, head.pos.startLine + 1)
             case _ =>
               val excMsg = """

@@ -6,8 +6,6 @@ import com.virtuslab.stacktracebuddy.printer.PrettyExceptionPrinter
 import org.junit.Test
 import org.junit.Assert._
 
-import java.net.URLClassLoader
-
 trait A:
   def doSthA = doSthAInlined
 
@@ -32,22 +30,22 @@ class BasicTest:
       test()
     catch
       case e: Exception =>
-        // e.getStackTrace.foreach(println) 
         val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
         PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
 
   @Test 
-  def nestedLambdas = 
-    executeTest { () =>
+  def nestedLambdas = executeTest { () =>
+      val y = 1
       val x = (0 to 10).flatMap { 
         n => List(n).map { 
           n => (if n > 5 then List(true) else List(false)).flatMap {
-            n => (if n then List("0") else List("5")).map {
-              n => n.toInt ! n.toInt ! n.toInt
+            n => (if n then List("0") else List("5")).map { 
+              n => n.toInt ! n.toInt ! n.toInt 
             }
           }
         } 
       }
+      val z = 1
     } 
 
   @Test 
