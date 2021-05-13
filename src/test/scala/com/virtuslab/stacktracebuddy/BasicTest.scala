@@ -1,7 +1,7 @@
-package com.virtuslab.stacktracebuddy
+package com.virtuslab.stacktraces
 
-import com.virtuslab.stacktracebuddy.core.StackTraceBuddy
-import com.virtuslab.stacktracebuddy.printer.PrettyExceptionPrinter
+import com.virtuslab.stacktraces.core.Stacktraces
+import com.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
 import org.junit.Test
 import org.junit.Assert._
@@ -30,7 +30,7 @@ class BasicTest:
       test()
     catch
       case e: Exception =>
-        val prettyStackTrace = StackTraceBuddy.convertToPrettyStackTrace(e)
+        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(e)
         PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
 
   @Test 

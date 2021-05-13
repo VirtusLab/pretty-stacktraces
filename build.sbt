@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     organization := "com.virtuslab",
-    name := "stacktracebuddy",
+    name := "pretty-stacktraces",
     version := "0.1.0",
 
     scalaVersion := scala3Version,

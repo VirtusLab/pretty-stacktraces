@@ -1,4 +1,4 @@
-package com.virtuslab.stacktracebuddy.model
+package com.virtuslab.stacktraces.model
 
 import java.io.File
 
