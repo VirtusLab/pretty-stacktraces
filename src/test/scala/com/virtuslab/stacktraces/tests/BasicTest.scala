@@ -6,6 +6,7 @@ import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 import org.junit.Test
 import org.junit.Assert._
 
+
 trait A:
   def doSthA = doSthAInlined
 
@@ -25,16 +26,8 @@ extension (n: Int)
 
 class BasicTest:
 
-  private def executeTest(test: () => Unit) =
-    try
-      test()
-    catch
-      case e: Exception =>
-        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(e)
-        PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
-
   @Test 
-  def nestedLambdas = executeTest { () =>
+  def nestedLambdas = TestExecutor.executeTest { () =>
       val y = 1
       val x = (0 to 10).flatMap { 
         n => List(n).map { 
@@ -50,8 +43,8 @@ class BasicTest:
 
   @Test 
   def BdoSth = 
-    executeTest(() => B().doSth)
+    TestExecutor.executeTest(() => B().doSth)
 
   @Test 
   def BdoSthA = 
-    executeTest(() => B().doSthA)
+    TestExecutor.executeTest(() => B().doSthA)
