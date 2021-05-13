@@ -1,11 +1,11 @@
-package com.virtuslab.stacktracebuddy.core
+package com.virtuslab.stacktraces.core
 
-import com.virtuslab.stacktracebuddy.model.PrettyException
-import com.virtuslab.stacktracebuddy.model.PrettyStackTraceElement
-import com.virtuslab.stacktracebuddy.model.ElementType
-import com.virtuslab.stacktracebuddy.io.ClasspathDirectoriesLoader
-import com.virtuslab.stacktracebuddy.io.TastyFilesLocator
-import com.virtuslab.stacktracebuddy.tasty.TypesSupport
+import com.virtuslab.stacktraces.model.PrettyException
+import com.virtuslab.stacktraces.model.PrettyStackTraceElement
+import com.virtuslab.stacktraces.model.ElementType
+import com.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
+import com.virtuslab.stacktraces.io.TastyFilesLocator
+import com.virtuslab.stacktraces.tasty.TypesSupport
 
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names
@@ -17,14 +17,14 @@ import scala.collection.JavaConverters.*
 import java.io.File
 
 
-object StackTraceBuddyInspector:
+object StacktracesInspector:
   def inspectStackTrace(ste: StackTraceElement, tastyFile: File): Option[PrettyStackTraceElement] =
-    val stackTraceBuddyInspector = StackTraceBuddyInspector(ste)
-    TastyInspector.inspectTastyFiles(List(tastyFile.toString))(stackTraceBuddyInspector)
-    stackTraceBuddyInspector.prettyStackTrace
+    val stacktracesInspector = StacktracesInspector(ste)
+    TastyInspector.inspectTastyFiles(List(tastyFile.toString))(stacktracesInspector)
+    stacktracesInspector.prettyStackTrace
 
 
-class StackTraceBuddyInspector private (ste: StackTraceElement) extends Inspector:
+class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
   private var prettyStackTrace: Option[PrettyStackTraceElement] = None
   
   override def inspect(using q: Quotes)(tastys: List[Tasty[quotes.type]]): Unit =

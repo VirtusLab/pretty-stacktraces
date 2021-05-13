@@ -1,11 +1,11 @@
-package com.virtuslab.stacktracebuddy.core
+package com.virtuslab.stacktraces.core
 
-import com.virtuslab.stacktracebuddy.model.TastyWrapper
-import com.virtuslab.stacktracebuddy.model.PrettyException
-import com.virtuslab.stacktracebuddy.model.PrettyStackTraceElement
-import com.virtuslab.stacktracebuddy.model.ElementType
-import com.virtuslab.stacktracebuddy.io.ClasspathDirectoriesLoader
-import com.virtuslab.stacktracebuddy.io.TastyFilesLocator
+import com.virtuslab.stacktraces.model.TastyWrapper
+import com.virtuslab.stacktraces.model.PrettyException
+import com.virtuslab.stacktraces.model.PrettyStackTraceElement
+import com.virtuslab.stacktraces.model.ElementType
+import com.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
+import com.virtuslab.stacktraces.io.TastyFilesLocator
 
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters.*
 import java.io.File
 import java.nio.file.Paths
 
-object StackTraceBuddy:
+object Stacktraces:
   lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
   def convertToPrettyStackTrace(e: Exception): PrettyException =
@@ -25,7 +25,7 @@ object StackTraceBuddy:
       val tastyFilesLocator = TastyFilesLocator(classpathDirectories)
       tastyFilesLocator.findTastyFile(ste.getClassName) match
         case Some(TastyWrapper(tastyFile, opJarName)) =>
-          StackTraceBuddyInspector.inspectStackTrace(ste, tastyFile).map(_.copy(jarName = opJarName))
+          StacktracesInspector.inspectStackTrace(ste, tastyFile).map(_.copy(jarName = opJarName))
         case None =>
           Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber))
     }.toList

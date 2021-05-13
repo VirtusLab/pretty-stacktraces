@@ -1,4 +1,4 @@
-package com.virtuslab.stacktracebuddy.printer
+package com.virtuslab.stacktraces.printer
 
 import Console.RESET
 

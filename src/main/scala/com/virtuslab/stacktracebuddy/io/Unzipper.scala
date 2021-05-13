@@ -1,4 +1,4 @@
-package com.virtuslab.stacktracebuddy.io
+package com.virtuslab.stacktraces.io
 
 import java.io.File
 import java.io.FileInputStream
