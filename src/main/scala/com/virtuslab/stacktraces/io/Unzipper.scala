@@ -5,8 +5,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.zip.ZipInputStream
-import java.util.Map.entry
 
 object Unzipper:
 
@@ -23,9 +23,7 @@ object Unzipper:
       else
         val file = newFilePath.toFile
         file.getParentFile.mkdirs
-        val fos = FileOutputStream(file)
-        input.transferTo(fos)
-        fos.close()
+        Files.copy(input, newFilePath, StandardCopyOption.REPLACE_EXISTING)
       input.closeEntry
       ze = input.getNextEntry
     input.closeEntry
