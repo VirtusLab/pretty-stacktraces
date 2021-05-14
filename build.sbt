@@ -1,3 +1,23 @@
+inThisBuild(List(
+  organization := "com.virtuslab",
+  homepage := Some(url("https://github.com/VirtusLab/pretty-stacktraces")),
+  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  developers := List(
+    Developer(
+      "BarkingBad",
+      "Andrzej Ratajczak",
+      "andrzej.ratajczak98@gmail.com",
+      url("https://twitter.com/aj_ratajczak")
+    ),
+    Developer(
+      "romanowski",
+      "Krzysztof Romanowski",
+      "kromanowski@virtuslab.com",
+      url("https://twitter.com/RomanowskiKr")
+    )
+  )
+))
+
 val scala3Version = "3.0.0-RC2"
 
 lazy val root = project
@@ -5,7 +25,6 @@ lazy val root = project
   .settings(
     organization := "com.virtuslab",
     name := "pretty-stacktraces",
-    version := "0.1.0",
 
     scalaVersion := scala3Version,
 
