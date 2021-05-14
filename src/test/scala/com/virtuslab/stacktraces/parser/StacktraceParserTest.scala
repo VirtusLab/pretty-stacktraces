@@ -35,6 +35,13 @@ class StacktraceParserTest:
 
   @Test 
   def parserTest =
-    val stacktrace = StacktraceParser.parse(stacktraceRaw)
-    val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(stacktrace)
-    PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
+    val errorOrStacktrace = StacktraceParser.parse(stacktraceRaw)
+    errorOrStacktrace match
+      case Left(msg) => throw AssertionError(msg)
+      case Right(stacktrace) =>
+        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(stacktrace)
+        /*
+         * This stacktrace is subject to Tasty files generated for BasicTest.scala, if you see some weird output, probably BasicTest.scala diverged.
+         * Nonetheless, we can count test as passing correctly if it hits Right branch.
+         */
+        PrettyExceptionPrinter.printStacktrace(prettyStackTrace)

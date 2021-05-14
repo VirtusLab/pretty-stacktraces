@@ -41,30 +41,36 @@ object StacktraceParser:
 
   val stlRegex = "^(?: {4}|\\t)at ((?:(?:[\\d\\w]*\\.)*[\\d\\w]*))\\.([\\d\\w\\$]*)\\.([\\d\\w\\$]*)\\((?:(?:([\\d\\w]*\\.(?:scala|java)):(\\d*))|([\\d\\w\\s]*))\\)$".r
 
-  def parse(stacktrace: String): Exception =
-
-    stacktrace.split("\n").toList match
-      case head :: tail =>
-        val stackTraceElements = tail.map { line =>
-          line match
-            case stlRegex(packageName, className, methodName, fileName, lineNumberOrNull, nativeMethodOrNull) =>
-              val lineNumber = Option(lineNumberOrNull).map(_.toInt).getOrElse {
-                if nativeMethodOrNull == "Native Method" then -2 else -1
-              }
-              val ste = StackTraceElement(
-                packageName + "." + className,
-                methodName,
-                fileName,
-                lineNumber
-              )
-              if s"    at ${ste.toString}" != line then
-                val msg = "ERROR: Stack trace line could not be parsed to StackTraceElement:\n" +
-                  s"Original stack trace line: $line\n" +
-                  s"Parsed StackTraceElement:     at ${ste.toString}"
-                throw IllegalStateException(msg)
-              ste
-        }
-        val ex = Exception(head)
-        ex.setStackTrace(stackTraceElements.toArray)
-        ex
-      case Nil => throw IllegalStateException("Stacktrace cannot be empty!")
+  def parse(stacktraceRaw: String): Either[String, Exception] =
+    val stackTraceLines = stacktraceRaw.split("\n").toList
+    val (head, stackTrace) = stackTraceLines.span(stlRegex.unapplySeq(_).isEmpty)
+    val (errors, stackTraceElements) = stackTrace.partitionMap { line =>
+      line match
+        case stlRegex(packageName, className, methodName, fileName, lineNumberOrNull, nativeMethodOrNull) =>
+          val lineNumber = Option(lineNumberOrNull).map(_.toInt).getOrElse {
+            if nativeMethodOrNull == "Native Method" then -2 else -1
+          }
+          val ste = StackTraceElement(
+            packageName + "." + className,
+            methodName,
+            fileName,
+            lineNumber
+          )
+          if s"    at ${ste.toString}" != line then
+            val msg = "ERROR: Stack trace line could not be parsed to StackTraceElement:\n" +
+              s"Original stack trace line: $line\n" +
+              s"Parsed StackTraceElement:     at ${ste.toString}"
+            Left(msg)
+          else
+            Right(ste)
+        case _ =>
+          val msg = "ERROR: Couldn't match stacktrace to regex\n" +
+            s"Originial stack trace line: $line\n"
+          Left(msg)
+    }
+    if errors.nonEmpty then
+      Left(s"Encountered errors while parsing: ${errors.mkString("\n")}")
+    else
+      val ex = Exception(head.mkString("\n"))
+      ex.setStackTrace(stackTraceElements.toArray)
+      Right(ex)
