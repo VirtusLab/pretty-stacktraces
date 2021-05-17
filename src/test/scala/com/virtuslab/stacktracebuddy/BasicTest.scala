@@ -1,7 +1,7 @@
-package com.virtuslab.stacktraces
+package org.virtuslab.stacktraces
 
-import com.virtuslab.stacktraces.core.Stacktraces
-import com.virtuslab.stacktraces.printer.PrettyExceptionPrinter
+import org.virtuslab.stacktraces.core.Stacktraces
+import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
 import org.junit.Test
 import org.junit.Assert._

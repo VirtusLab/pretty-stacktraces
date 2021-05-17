@@ -1,7 +1,7 @@
-package com.virtuslab.stacktraces.io
+package org.virtuslab.stacktraces.io
 
-import com.virtuslab.stacktraces.model.ClasspathWrapper
-import com.virtuslab.stacktraces.model.TastyWrapper
+import org.virtuslab.stacktraces.model.ClasspathWrapper
+import org.virtuslab.stacktraces.model.TastyWrapper
 
 import java.io.File
 import java.nio.file.Paths
