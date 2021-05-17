@@ -1,11 +1,11 @@
-package com.virtuslab.stacktraces.core
+package org.virtuslab.stacktraces.core
 
-import com.virtuslab.stacktraces.model.PrettyException
-import com.virtuslab.stacktraces.model.PrettyStackTraceElement
-import com.virtuslab.stacktraces.model.ElementType
-import com.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
-import com.virtuslab.stacktraces.io.TastyFilesLocator
-import com.virtuslab.stacktraces.tasty.TypesSupport
+import org.virtuslab.stacktraces.model.PrettyException
+import org.virtuslab.stacktraces.model.PrettyStackTraceElement
+import org.virtuslab.stacktraces.model.ElementType
+import org.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
+import org.virtuslab.stacktraces.io.TastyFilesLocator
+import org.virtuslab.stacktraces.tasty.TypesSupport
 
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names

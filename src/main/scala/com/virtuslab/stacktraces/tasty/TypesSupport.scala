@@ -1,4 +1,4 @@
-package com.virtuslab.stacktraces
+package org.virtuslab.stacktraces
 package tasty
 
 import scala.quoted.Quotes

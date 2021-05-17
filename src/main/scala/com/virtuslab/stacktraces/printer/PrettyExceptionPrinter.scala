@@ -1,8 +1,8 @@
-package com.virtuslab.stacktraces.printer
+package org.virtuslab.stacktraces.printer
 
-import com.virtuslab.stacktraces.model.ElementType
-import com.virtuslab.stacktraces.model.PrettyStackTraceElement
-import com.virtuslab.stacktraces.model.PrettyException
+import org.virtuslab.stacktraces.model.ElementType
+import org.virtuslab.stacktraces.model.PrettyStackTraceElement
+import org.virtuslab.stacktraces.model.PrettyException
 
 
 object PrettyExceptionPrinter:

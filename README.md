@@ -35,25 +35,25 @@ After executing it with `sbt run` we get following output:
   ```
 sbt:pretty-stacktraces> run
 [info] compiling 1 Scala source to <root>/stacktraces/target/scala-3.0.0-RC2/classes ...
-[info] running com.virtuslab.stacktraces.run 
+[info] running org.virtuslab.stacktraces.run 
 [error] (run-main-5) java.lang.RuntimeException: error
 [error] java.lang.RuntimeException: error
-[error]         at com.virtuslab.stacktraces.main$package$.$bang(main.scala:8)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$1$$anonfun$1$$anonfun$1$$anonfun$1(main.scala:17)
+[error]         at org.virtuslab.stacktraces.main$package$.$bang(main.scala:8)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$1$$anonfun$1$$anonfun$1$$anonfun$1(main.scala:17)
 [error]         at scala.collection.immutable.List.map(List.scala:246)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$2$$anonfun$2$$anonfun$2(main.scala:17)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$3$$anonfun$3$$anonfun$adapted$1(main.scala:18)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$2$$anonfun$2$$anonfun$2(main.scala:17)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$3$$anonfun$3$$anonfun$adapted$1(main.scala:18)
 [error]         at scala.collection.immutable.List.flatMap(List.scala:293)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$4$$anonfun$4(main.scala:18)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$5$$anonfun$adapted$1(main.scala:19)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$4$$anonfun$4(main.scala:18)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$5$$anonfun$adapted$1(main.scala:19)
 [error]         at scala.collection.immutable.List.map(List.scala:246)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$6(main.scala:19)
-[error]         at com.virtuslab.stacktraces.main$package$.$anonfun$adapted$1(main.scala:20)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$6(main.scala:19)
+[error]         at org.virtuslab.stacktraces.main$package$.$anonfun$adapted$1(main.scala:20)
 [error]         at scala.collection.StrictOptimizedIterableOps.flatMap(StrictOptimizedIterableOps.scala:117)
 [error]         at scala.collection.StrictOptimizedIterableOps.flatMap$(StrictOptimizedIterableOps.scala:104)
 [error]         at scala.collection.immutable.Range.flatMap(Range.scala:59)
-[error]         at com.virtuslab.stacktraces.main$package$.run(main.scala:20)
-[error]         at com.virtuslab.stacktraces.run.main(main.scala:11)
+[error]         at org.virtuslab.stacktraces.main$package$.run(main.scala:20)
+[error]         at org.virtuslab.stacktraces.run.main(main.scala:11)
 [error]         at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 [error]         at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 [error]         at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -94,7 +94,7 @@ After executing it with `sbt run` we get following output:
   ```
 sbt:stacktraces> run
 [info] compiling 1 Scala source to <root>/stacktraces/target/scala-3.0.0-RC2/classes ...
-[info] running com.virtuslab.stacktraces.run 
+[info] running org.virtuslab.stacktraces.run 
 Exception in thread run-main-6: java.lang.RuntimeException: error
     at extension method ! in src/main/scala/com/virtuslab/stacktraces/main.scala:8 inside stacktraces_3.0.0-RC2-0.1.0.jar
     at lambda (String) => Int of some outer lambda in src/main/scala/com/virtuslab/stacktraces/main.scala:17 inside stacktraces_3.0.0-RC2-0.1.0.jar
@@ -186,14 +186,14 @@ The problem is, the original stack trace for that is:
 
 ```
 ...
-com.virtuslab.stacktraces.BasicTest.$anonfun$6(BasicTest.scala:47)
-com.virtuslab.stacktraces.BasicTest.$anonfun$adapted$1(BasicTest.scala:48) // <-- pointing at closing bracket of flatMap
+org.virtuslab.stacktraces.BasicTest.$anonfun$6(BasicTest.scala:47)
+org.virtuslab.stacktraces.BasicTest.$anonfun$adapted$1(BasicTest.scala:48) // <-- pointing at closing bracket of flatMap
 scala.collection.StrictOptimizedIterableOps.flatMap(StrictOptimizedIterableOps.scala:117)
 scala.collection.StrictOptimizedIterableOps.flatMap$(StrictOptimizedIterableOps.scala:104)
 scala.collection.immutable.Range.flatMap(Range.scala:59)
-com.virtuslab.stacktraces.BasicTest.nestedLambdas$$anonfun$1(BasicTest.scala:48) // <-- also pointing at closing bracket of flatMap
-com.virtuslab.stacktraces.BasicTest.executeTest(BasicTest.scala:30)
-com.virtuslab.stacktraces.BasicTest.nestedLambdas(BasicTest.scala:50)
+org.virtuslab.stacktraces.BasicTest.nestedLambdas$$anonfun$1(BasicTest.scala:48) // <-- also pointing at closing bracket of flatMap
+org.virtuslab.stacktraces.BasicTest.executeTest(BasicTest.scala:30)
+org.virtuslab.stacktraces.BasicTest.nestedLambdas(BasicTest.scala:50)
 ...
 ```
 

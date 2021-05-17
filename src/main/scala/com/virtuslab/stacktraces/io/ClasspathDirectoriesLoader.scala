@@ -1,10 +1,10 @@
-package com.virtuslab.stacktraces.io
+package org.virtuslab.stacktraces.io
 
 import java.net.URLClassLoader
 import java.net.URL
 import java.io.File
 
-import com.virtuslab.stacktraces.model.ClasspathWrapper
+import org.virtuslab.stacktraces.model.ClasspathWrapper
 
 object ClasspathDirectoriesLoader:
 
