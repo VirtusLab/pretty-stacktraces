@@ -17,5 +17,23 @@ case class PrettyStackTraceElement(
   prettyName: String, 
   prettyFile: String, 
   lineNumber: Int,
-  jarName: Option[String] = None
+  jarName: Option[String] = None,
+  error: Option[PrettyErrors] = None
 )
+
+enum PrettyErrors(val msg: String):
+  case InlinedLambda extends PrettyErrors(
+    """Too many nested lambdas in one line, cannot disambiguate. 
+    | For debugging purposes try to make every nested lambda to be in a separate line, e. g.
+    | list.map { x => x.map { y => ... } }
+    | would be
+    | list.map { x => x.map {
+    |   y => ...
+    | } }
+    |""".stripMargin
+  )
+  case Unknown extends PrettyErrors(
+    """Couldnt disambiguate function for this stack frame $ste, possible reasons:
+    | - Nested inline function inside another function (due to name mangling they are hard to locate)
+    |""".stripMargin
+  )

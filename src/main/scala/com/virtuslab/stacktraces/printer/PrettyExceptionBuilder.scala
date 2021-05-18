@@ -4,6 +4,7 @@ import Console.RESET
 
 val RED = "\u001b[38;5;203m"
 val LIGHT_ORANGE = "\u001b[38;5;215m"
+val BLUE = "\u001b[38;5;39m"
 val GREEN = "\u001b[38;5;120m"
 val AMBER = "\u001b[38;5;142m"
 val LIGHT_PURPLE = "\u001b[38;5;141m"
@@ -13,7 +14,7 @@ class PrettyStackTrace:
     def build = stackTraceBuilder.toString
     def ++=(s: String): Unit = stackTraceBuilder ++= s
 
-def prettyStackTrace(init: PrettyStackTrace ?=> Unit) =
+def prettyStackTrace(init: PrettyStackTrace ?=> Unit): PrettyStackTrace =
   given p: PrettyStackTrace = PrettyStackTrace()
   init
   p

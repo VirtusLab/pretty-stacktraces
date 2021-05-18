@@ -3,9 +3,11 @@ package org.virtuslab.stacktraces.core
 import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
 import org.virtuslab.stacktraces.model.ElementType
+import org.virtuslab.stacktraces.model.PrettyErrors
 import org.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
 import org.virtuslab.stacktraces.io.TastyFilesLocator
 import org.virtuslab.stacktraces.tasty.TypesSupport
+
 
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names
@@ -42,7 +44,11 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
       case _ => ElementType.Method
           
     def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
-      Some(PrettyStackTraceElement(ste, label(d), d.name, d.pos.sourceFile.jpath.toString, lineNumber))
+      val nameWithoutPrefix = d.pos.sourceFile.jpath.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.0-RC2/src_managed/main/scala-library-src/") // TODO: Remove when stdlib will be shipped with tasty files!
+      Some(PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix, lineNumber))
+
+    def createErrorWhileBrowsingTastyFiles(ste: StackTraceElement, error: PrettyErrors): Some[PrettyStackTraceElement] =
+      Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, error = Some(error)))
 
     def walkInOrder(tree: Tree): List[DefDef] =
       if tree.pos.startLine < ste.getLineNumber then
@@ -129,16 +135,7 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
             case head :: Nil =>
               createPrettyStackTraceElement(head, head.pos.startLine + 1)
             case _ =>
-              val excMsg = """
-              | Too many nested lambdas in one line, cannot disambiguate. 
-              | For debugging purposes try to make every nested lambda to be separate line, e. g.
-              | list.map { x => x.map { y => ... } }
-              | would be
-              | list.map { x => x.map {
-              |   y => ...
-              | } }
-              """.trim
-              throw IllegalStateException(excMsg)
+              createErrorWhileBrowsingTastyFiles(ste, PrettyErrors.InlinedLambda)
         case d =>
           defdefs match
             case Nil =>
@@ -151,11 +148,7 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
                 case head :: Nil =>
                   createPrettyStackTraceElement(head, ste.getLineNumber)
                 case defdefs =>
-                  val excMsg = s"""
-                  | Couldnt disambiguate function for this stack frame $ste, possible reasons:
-                  | - Nested inline function inside another function (due to name mangling they are hard to locate)
-                  """.trim
-                  throw IllegalStateException(excMsg)
+                  createErrorWhileBrowsingTastyFiles(ste, PrettyErrors.Unknown)
 
     for tasty <- tastys do
       val tree = tasty.ast
