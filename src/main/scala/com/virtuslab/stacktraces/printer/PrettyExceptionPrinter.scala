@@ -4,6 +4,7 @@ import org.virtuslab.stacktraces.model.ElementType
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
 import org.virtuslab.stacktraces.model.PrettyException
 
+import Console.RESET
 
 object PrettyExceptionPrinter:
 
@@ -14,7 +15,7 @@ object PrettyExceptionPrinter:
       add("\n")
       val errors = pe.prettyStackTrace.flatMap(_.error).distinct
       pe.prettyStackTrace.foreach {
-        case PrettyStackTraceElement(ste, elementType, prettyName, prettyFile, lineNumber, opJarName, error) =>
+        case PrettyStackTraceElement(ste, elementType, prettyName, prettyFile, lineNumber, opJarName, error, isTasty) =>
           add("    at ")
           elementType match
             case ElementType.Lambda(tpe, parent) =>
@@ -23,19 +24,23 @@ object PrettyExceptionPrinter:
               add(s" of ${parent} ")
             case _ =>
               add(s"${elementType.name} ")
-              val clr = if error.isDefined then RED else AMBER
+              val clr = error match
+                case Some(_) => RED 
+                case None => isTasty match
+                  case true => AMBER
+                  case false => GRAY
               addWithColor(clr)(s"$prettyName ")
           val lineNumberOrNativeMethod = if ste.isNativeMethod then "(Native method)" else lineNumber
           add("in ")
           addWithColor(GREEN)(prettyFile)
           add(":")
           addWithColor(BLUE)(s"$lineNumberOrNativeMethod ")
-          opJarName match
-            case Some(name) =>
-              add("inside ")
-              addWithColor(LIGHT_PURPLE)(s"$name ")
-            case None =>
-              // do nothing
+          // opJarName match
+          //   case Some(name) =>
+          //     add("inside ")
+          //     addWithColor(LIGHT_PURPLE)(s"$name ")
+          //   case None =>
+          //     // do nothing
           error match
             case Some(er) =>
               addWithColor(RED)(s"[${errors.indexOf(er) + 1}]")
