@@ -17,8 +17,9 @@ object ClasspathDirectoriesLoader:
     getUrls(getClass.getClassLoader).map(_.toURI).map(File(_)).toList
 
   def getClasspathDirectories: List[ClasspathWrapper] =
-    val classPathFiles = getClasspath
-    val (directories, jars) = classPathFiles.partition(_.isDirectory)
+    getClasspathDirectories(getClasspath)
+  def getClasspathDirectories(classPathFiles: Seq[File]): List[ClasspathWrapper] =
+    val (directories, jars) = classPathFiles.toList.partition(_.isDirectory)
     val allDirectories = projectClassesToClasspathWrappers(directories) ++ jarsToClasspathWrappers(jars)
     allDirectories
 
