@@ -13,7 +13,7 @@ object ClasspathDirectoriesLoader:
     case u: URLClassLoader => u.getURLs ++ getUrls(cl.getParent)
     case _ => getUrls(cl.getParent)
 
-  private def getClasspath: List[File] =
+  def getClasspath: List[File] =
     getUrls(getClass.getClassLoader).map(_.toURI).map(File(_)).toList
 
   def getClasspathDirectories: List[ClasspathWrapper] =
