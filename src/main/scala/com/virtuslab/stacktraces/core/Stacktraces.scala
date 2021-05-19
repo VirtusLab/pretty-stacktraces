@@ -1,5 +1,6 @@
 package org.virtuslab.stacktraces.core
 
+import org.virtuslab.stacktraces.model.ClasspathWrapper
 import org.virtuslab.stacktraces.model.TastyWrapper
 import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
@@ -21,6 +22,12 @@ object Stacktraces:
   lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
   def convertToPrettyStackTrace(e: Exception): PrettyException =
+    convertToPrettyStackTrace(e, classpathDirectories)
+
+  def convertToPrettyStackTrace(
+    e: Exception,
+    classpathDirectories: List[ClasspathWrapper]
+  ): PrettyException =
     val st = filterInternalStackFrames(e.getStackTrace).flatMap { ste =>
       val tastyFilesLocator = TastyFilesLocator(classpathDirectories)
       tastyFilesLocator.findTastyFile(ste.getClassName) match
