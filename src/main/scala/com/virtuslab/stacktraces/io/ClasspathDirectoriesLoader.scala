@@ -8,15 +8,15 @@ import org.virtuslab.stacktraces.model.ClasspathWrapper
 
 object ClasspathDirectoriesLoader:
 
-  private def getUrls(cl: ClassLoader): Array[URL] = cl match
+  private def classpath(cl: ClassLoader): Array[File] = cl match
     case null => Array()
-    case u: URLClassLoader => u.getURLs ++ getUrls(cl.getParent)
-    case _ => getUrls(cl.getParent)
+    case u: URLClassLoader => u.getURLs.map(_.toURI).map(new File(_)) ++ classpath(cl.getParent)
+    case _ => classpath(cl.getParent)
 
   def getClasspath: List[File] =
     getClasspath(Thread.currentThread().getContextClassLoader)
   def getClasspath(loader: ClassLoader): List[File] =
-    getUrls(loader).map(_.toURI).map(File(_)).toList
+    classpath(loader).toList
 
   def getClasspathDirectories: List[ClasspathWrapper] =
     getClasspathDirectories(getClasspath)
