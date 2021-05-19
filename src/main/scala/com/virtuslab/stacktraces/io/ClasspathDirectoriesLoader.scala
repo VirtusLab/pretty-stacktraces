@@ -14,7 +14,9 @@ object ClasspathDirectoriesLoader:
     case _ => getUrls(cl.getParent)
 
   def getClasspath: List[File] =
-    getUrls(getClass.getClassLoader).map(_.toURI).map(File(_)).toList
+    getClasspath(getClass.getClassLoader)
+  def getClasspath(loader: ClassLoader): List[File] =
+    getUrls(loader).map(_.toURI).map(File(_)).toList
 
   def getClasspathDirectories: List[ClasspathWrapper] =
     getClasspathDirectories(getClasspath)
