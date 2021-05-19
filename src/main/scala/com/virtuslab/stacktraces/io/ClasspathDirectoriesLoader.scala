@@ -11,6 +11,12 @@ object ClasspathDirectoriesLoader:
   private def classpath(cl: ClassLoader): Array[File] = cl match
     case null => Array()
     case u: URLClassLoader => u.getURLs.map(_.toURI).map(new File(_)) ++ classpath(cl.getParent)
+    case cl if cl.getClass.getName == "jdk.internal.loader.ClassLoaders$AppClassLoader" =>
+      // Required with JDK >= 9
+      sys.props.getOrElse("java.class.path", "")
+        .split(File.pathSeparator)
+        .filter(_.nonEmpty)
+        .map(new File(_))
     case _ => classpath(cl.getParent)
 
   def getClasspath: List[File] =
