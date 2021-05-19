@@ -4,7 +4,7 @@ import java.io.File
 
 case class ClasspathWrapper(file: File, jarName: Option[String])
 case class TastyWrapper(file: File, jarName: Option[String])
-case class PrettyException(original: Exception, prettyStackTrace: List[PrettyStackTraceElement])
+case class PrettyException(original: Throwable, prettyStackTrace: List[PrettyStackTraceElement])
 
 enum ElementType(val name: String):
   case Method extends ElementType("method")

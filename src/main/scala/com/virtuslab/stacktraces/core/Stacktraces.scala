@@ -21,11 +21,11 @@ import java.nio.file.Paths
 object Stacktraces:
   lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
-  def convertToPrettyStackTrace(e: Exception): PrettyException =
+  def convertToPrettyStackTrace(e: Throwable): PrettyException =
     convertToPrettyStackTrace(e, classpathDirectories)
 
   def convertToPrettyStackTrace(
-    e: Exception,
+    e: Throwable,
     classpathDirectories: List[ClasspathWrapper]
   ): PrettyException =
     val st = filterInternalStackFrames(e.getStackTrace).flatMap { ste =>
