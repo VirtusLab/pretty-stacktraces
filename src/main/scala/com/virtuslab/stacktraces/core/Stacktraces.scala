@@ -1,5 +1,6 @@
 package org.virtuslab.stacktraces.core
 
+import org.virtuslab.stacktraces.model.ClasspathWrapper
 import org.virtuslab.stacktraces.model.TastyWrapper
 import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
@@ -20,7 +21,13 @@ import java.nio.file.Paths
 object Stacktraces:
   lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
-  def convertToPrettyStackTrace(e: Exception): PrettyException =
+  def convertToPrettyStackTrace(e: Throwable): PrettyException =
+    convertToPrettyStackTrace(e, classpathDirectories)
+
+  def convertToPrettyStackTrace(
+    e: Throwable,
+    classpathDirectories: List[ClasspathWrapper]
+  ): PrettyException =
     val st = filterInternalStackFrames(e.getStackTrace).flatMap { ste =>
       val tastyFilesLocator = TastyFilesLocator(classpathDirectories)
       tastyFilesLocator.findTastyFile(ste.getClassName) match
