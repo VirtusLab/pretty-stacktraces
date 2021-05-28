@@ -18,7 +18,8 @@ case class PrettyStackTraceElement(
   prettyFile: String, 
   lineNumber: Int,
   jarName: Option[String] = None,
-  error: Option[PrettyErrors] = None
+  error: Option[PrettyErrors] = None,
+  isTasty: Boolean = true
 )
 
 enum PrettyErrors(val msg: String):
@@ -33,7 +34,7 @@ enum PrettyErrors(val msg: String):
     |""".stripMargin
   )
   case Unknown extends PrettyErrors(
-    """Couldnt disambiguate function for this stack frame $ste, possible reasons:
+    """Couldn't disambiguate function, possible reasons:
     | - Nested inline function inside another function (due to name mangling they are hard to locate)
     |""".stripMargin
   )

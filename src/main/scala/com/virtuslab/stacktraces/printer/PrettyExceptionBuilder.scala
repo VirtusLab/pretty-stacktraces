@@ -8,6 +8,7 @@ val BLUE = "\u001b[38;5;39m"
 val GREEN = "\u001b[38;5;120m"
 val AMBER = "\u001b[38;5;142m"
 val LIGHT_PURPLE = "\u001b[38;5;141m"
+val GRAY = "\u001b[38;5;248m"
 
 class PrettyStackTrace:
     val stackTraceBuilder = new StringBuilder

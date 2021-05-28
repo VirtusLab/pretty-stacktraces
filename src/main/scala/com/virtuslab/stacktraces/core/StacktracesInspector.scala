@@ -44,7 +44,7 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
       case _ => ElementType.Method
           
     def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
-      val nameWithoutPrefix = d.pos.sourceFile.jpath.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.0-RC2/src_managed/main/scala-library-src/") // TODO: Remove when stdlib will be shipped with tasty files!
+      val nameWithoutPrefix = d.pos.sourceFile.jpath.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.0-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/") // TODO: Remove when stdlib will be shipped with tasty files!
       Some(PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix, lineNumber))
 
     def createErrorWhileBrowsingTastyFiles(ste: StackTraceElement, error: PrettyErrors): Some[PrettyStackTraceElement] =
@@ -94,8 +94,8 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
           walkInOrder(term)
         case Super(_, _) =>
           Nil
-        case Typed(_, _) =>
-          Nil
+        case Typed(term, _) =>
+          walkInOrder(term)
         case Assign(lhs, rhs) =>
           walkInOrder(lhs) ++ walkInOrder(rhs)
         case Block(list, term) => 
@@ -137,7 +137,7 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
             case _ =>
               createErrorWhileBrowsingTastyFiles(ste, PrettyErrors.InlinedLambda)
         case d =>
-          defdefs match
+          defdefs.filter(_.name != "$anonfun") match
             case Nil =>
               None
             case head :: Nil =>

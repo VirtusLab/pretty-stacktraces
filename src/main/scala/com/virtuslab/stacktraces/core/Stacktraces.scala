@@ -34,7 +34,7 @@ object Stacktraces:
         case Some(TastyWrapper(tastyFile, opJarName)) =>
           StacktracesInspector.inspectStackTrace(ste, tastyFile).map(_.copy(jarName = opJarName))
         case None =>
-          Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber))
+          Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, isTasty = false))
     }.toList
     PrettyException(e, st)
 
