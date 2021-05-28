@@ -4,23 +4,28 @@ import org.virtuslab.stacktraces.model.ClasspathWrapper
 import org.virtuslab.stacktraces.model.TastyWrapper
 
 import java.io.File
+import java.io.InputStream
+import java.nio.file.Path
+import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
-class TastyFilesLocator(classpathDirectories: List[ClasspathWrapper]):
+class TastyFilesLocator(classLoader: ClassLoader):
 
-  def findTastyFile(className: String): Option[TastyWrapper] =
-    val classPath = className.stripSuffix("$").split("\\.")
-    val allPossibleFiles = classpathDirectories.flatMap { case ClasspathWrapper(cpd, opJarName) =>
-      val filePath = Paths.get(cpd.toPath.toAbsolutePath.toString, classPath*)
-      val tastyPath = filePath.resolveSibling(filePath.getFileName.toString + ".tasty")
-      val tastyFile = tastyPath.toFile
-      if tastyFile.exists then
-        Some(TastyWrapper(tastyFile, opJarName))
+  def tastyFilesFromStackTrace(classNameToPath: Map[String, String]): List[TastyWrapper] =
+    classNameToPath.values.toList.distinct.flatMap { clPath =>
+    val inputStream = classLoader.getResourceAsStream(clPath + ".tasty")
+      if inputStream != null then
+        val tastyFile: Path = Files.createTempFile("pretty-stacktraces", ".tasty")
+        tastyFile.toFile.deleteOnExit()
+        Files.copy(inputStream, tastyFile, StandardCopyOption.REPLACE_EXISTING);
+        Some(TastyWrapper(tastyFile.toFile, null))
       else 
         None
     }
 
-    allPossibleFiles match
-      case Nil => None
-      case head :: Nil => Some(head)
-      case head :: tail => throw RuntimeException(s"Conflicting classpaths for $className")
+  def classNameToPath(classNames: List[String]): Map[String, String] =
+    classNames.map { cn =>
+      val clArray = cn.stripSuffix("$").split("\\.")
+      cn -> (Paths.get(clArray.head, clArray.tail*).toString)
+    }.toMap

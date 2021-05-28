@@ -5,7 +5,6 @@ import org.virtuslab.stacktraces.model.TastyWrapper
 import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
 import org.virtuslab.stacktraces.model.ElementType
-import org.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
 import org.virtuslab.stacktraces.io.TastyFilesLocator
 
 import dotty.tools.dotc.util.NameTransformer
@@ -19,24 +18,14 @@ import java.io.File
 import java.nio.file.Paths
 
 object Stacktraces:
-  lazy val classpathDirectories = ClasspathDirectoriesLoader.getClasspathDirectories 
 
   def convertToPrettyStackTrace(e: Throwable): PrettyException =
-    convertToPrettyStackTrace(e, classpathDirectories)
-
-  def convertToPrettyStackTrace(
-    e: Throwable,
-    classpathDirectories: List[ClasspathWrapper]
-  ): PrettyException =
-    val st = filterInternalStackFrames(e.getStackTrace).flatMap { ste =>
-      val tastyFilesLocator = TastyFilesLocator(classpathDirectories)
-      tastyFilesLocator.findTastyFile(ste.getClassName) match
-        case Some(TastyWrapper(tastyFile, opJarName)) =>
-          StacktracesInspector.inspectStackTrace(ste, tastyFile).map(_.copy(jarName = opJarName))
-        case None =>
-          Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, isTasty = false))
-    }.toList
-    PrettyException(e, st)
+    val tastyFilesLocator = TastyFilesLocator(Thread.currentThread().getContextClassLoader)
+    val st = filterInternalStackFrames(e.getStackTrace)
+    val ctp = tastyFilesLocator.classNameToPath(st.map(_.getClassName))
+    val tastyFiles = tastyFilesLocator.tastyFilesFromStackTrace(ctp)
+    val pst = StacktracesInspector.inspectStackTrace(st, tastyFiles, ctp)
+    PrettyException(e, pst)
 
   private def filterInternalStackFrames(st: Array[StackTraceElement]): List[StackTraceElement] =
     st.sliding(2).toList.flatMap {
