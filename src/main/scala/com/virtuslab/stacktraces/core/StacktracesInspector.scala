@@ -4,7 +4,6 @@ import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.PrettyStackTraceElement
 import org.virtuslab.stacktraces.model.ElementType
 import org.virtuslab.stacktraces.model.PrettyErrors
-import org.virtuslab.stacktraces.io.ClasspathDirectoriesLoader
 import org.virtuslab.stacktraces.io.TastyFilesLocator
 import org.virtuslab.stacktraces.tasty.TypesSupport
 
@@ -17,17 +16,19 @@ import scala.tasty.inspector.*
 import scala.collection.JavaConverters.*
 
 import java.io.File
+import scala.collection.mutable.ListBuffer
+import org.virtuslab.stacktraces.model.TastyWrapper
 
 
 object StacktracesInspector:
-  def inspectStackTrace(ste: StackTraceElement, tastyFile: File): Option[PrettyStackTraceElement] =
-    val stacktracesInspector = StacktracesInspector(ste)
-    TastyInspector.inspectTastyFiles(List(tastyFile.toString))(stacktracesInspector)
-    stacktracesInspector.prettyStackTrace
+  def inspectStackTrace(st: List[StackTraceElement], tastyFiles: List[TastyWrapper], ctp: Map[String, String]): List[PrettyStackTraceElement] =
+    val stacktracesInspector = StacktracesInspector(st, ctp)
+    TastyInspector.inspectTastyFiles(tastyFiles.map(_.file.toString))(stacktracesInspector)
+    stacktracesInspector.prettyStackTraceElements.toList
 
 
-class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
-  private var prettyStackTrace: Option[PrettyStackTraceElement] = None
+class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String, String]) extends Inspector:
+  private val prettyStackTraceElements: ListBuffer[PrettyStackTraceElement] = ListBuffer.empty
   
   override def inspect(using q: Quotes)(tastys: List[Tasty[quotes.type]]): Unit =
     import q.reflect.*
@@ -43,20 +44,20 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
         ElementType.Lambda(ts.toLambda(d.asInstanceOf[ts.qctx.reflect.DefDef]), parent)
       case _ => ElementType.Method
           
-    def createPrettyStackTraceElement(d: DefDef, lineNumber: Int): Some[PrettyStackTraceElement] =
+    def createPrettyStackTraceElement(d: DefDef, lineNumber: Int)(using ste: StackTraceElement): PrettyStackTraceElement =
       val nameWithoutPrefix = d.pos.sourceFile.jpath.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.0-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/") // TODO: Remove when stdlib will be shipped with tasty files!
-      Some(PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix, lineNumber))
+      PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix, lineNumber)
 
-    def createErrorWhileBrowsingTastyFiles(ste: StackTraceElement, error: PrettyErrors): Some[PrettyStackTraceElement] =
-      Some(PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, error = Some(error)))
+    def createErrorWhileBrowsingTastyFiles(error: PrettyErrors)(using ste: StackTraceElement): PrettyStackTraceElement =
+      PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, error = Some(error))
 
-    def walkInOrder(tree: Tree): List[DefDef] =
+    def walkInOrder(tree: Tree)(using ste: StackTraceElement): List[DefDef] =
       if tree.pos.startLine < ste.getLineNumber then
         visitTree(tree)
       else 
         Nil
     
-    def visitTree(tree: Tree): List[DefDef] =
+    def visitTree(tree: Tree)(using ste: StackTraceElement): List[DefDef] =
       tree match
         case PackageClause(_, list) => 
           list.flatMap(walkInOrder)
@@ -126,31 +127,41 @@ class StacktracesInspector private (ste: StackTraceElement) extends Inspector:
           println(s"Unmatched param: $x")
           Nil
     
-    def processDefDefs(defdefs: List[DefDef]): Unit =
+
+    def processDefDefs(defdefs: List[DefDef])(using ste: StackTraceElement): Option[PrettyStackTraceElement] =
       val decoded = NameTransformer.decode(Names.termName(ste.getMethodName)).toString
-      prettyStackTrace = decoded match
+      decoded match
         case d if d.contains("$anonfun$") =>
           val lambdas = defdefs.filter(f => f.name == "$anonfun" && f.pos.endLine + 1 == ste.getLineNumber)
           lambdas match
             case head :: Nil =>
-              createPrettyStackTraceElement(head, head.pos.startLine + 1)
+              Some(createPrettyStackTraceElement(head, head.pos.startLine + 1))
             case _ =>
-              createErrorWhileBrowsingTastyFiles(ste, PrettyErrors.InlinedLambda)
+              Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda))
         case d =>
           defdefs.filter(_.name != "$anonfun") match
             case Nil =>
               None
             case head :: Nil =>
-              createPrettyStackTraceElement(head, ste.getLineNumber)
+              Some(createPrettyStackTraceElement(head, ste.getLineNumber))
             case _ => 
               val fun = defdefs.filter(_.name == d)
               fun match // This will probably fail for nested inline functions, though we cannot disambiguate them
                 case head :: Nil =>
-                  createPrettyStackTraceElement(head, ste.getLineNumber)
+                  Some(createPrettyStackTraceElement(head, ste.getLineNumber))
                 case defdefs =>
-                  createErrorWhileBrowsingTastyFiles(ste, PrettyErrors.Unknown)
+                  Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.Unknown))
+       
 
-    for tasty <- tastys do
-      val tree = tasty.ast
-      val defdefs = walkInOrder(tree)
-      processDefDefs(defdefs)
+    st.foreach { ste =>
+      tastys.find(_.path.stripSuffix(".class") endsWith ctp(ste.getClassName)) match 
+        case Some(tasty) =>
+          given StackTraceElement = ste
+          val tree = tasty.ast
+          val defdefs = walkInOrder(tree)
+          processDefDefs(defdefs) match
+            case Some(e) => prettyStackTraceElements += e
+            case None => // do nothing
+        case None =>
+          prettyStackTraceElements += PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, isTasty = false)
+    }
