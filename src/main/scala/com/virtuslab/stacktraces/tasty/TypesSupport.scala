@@ -176,7 +176,7 @@ class TypesSupport(val qctx: Quotes):
         qual match {
           case r: RecursiveThis => texts(s"this.$typeName")
           case _: TypeRepr | _: NoPrefix => link(tp.typeSymbol)
-          case other => noSupported(s"TypeRepr: $tp")
+          case null => noSupported(s"TypeRepr: $tp")
         }
         // convertTypeOrBoundsToReference(reflect)(qual) match {
         //     case TypeReference(label, link, xs, _) => TypeReference(typeName, link + "/" + label, xs, true)

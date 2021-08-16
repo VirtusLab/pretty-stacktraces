@@ -9,17 +9,22 @@ import java.nio.file.Path
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.net.JarURLConnection
 
 class TastyFilesLocator(classLoader: ClassLoader):
 
   def tastyFilesFromStackTrace(classNameToPath: Map[String, String]): List[TastyWrapper] =
     classNameToPath.values.toList.distinct.flatMap { clPath =>
-    val inputStream = classLoader.getResourceAsStream(clPath + ".tasty")
-      if inputStream != null then
-        val tastyFile: Path = Files.createTempFile("pretty-stacktraces", ".tasty")
-        tastyFile.toFile.deleteOnExit()
-        Files.copy(inputStream, tastyFile, StandardCopyOption.REPLACE_EXISTING);
-        Some(TastyWrapper(tastyFile.toFile, null))
+    val url = classLoader.getResource(clPath + ".tasty")
+      if url != null then
+        url.getProtocol match
+          case "jar" =>
+            val outerUrl = url.openConnection.asInstanceOf[JarURLConnection].getJarFileURL
+            Some(TastyWrapper(Paths.get(outerUrl.toURI).toFile, null))
+          case "file" =>
+            Some(TastyWrapper(Paths.get(url.toURI).toFile, null))
+          case _ =>
+            None
       else 
         None
     }

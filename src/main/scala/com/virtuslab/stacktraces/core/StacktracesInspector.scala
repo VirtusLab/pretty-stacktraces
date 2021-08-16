@@ -23,7 +23,8 @@ import org.virtuslab.stacktraces.model.TastyWrapper
 object StacktracesInspector:
   def inspectStackTrace(st: List[StackTraceElement], tastyFiles: List[TastyWrapper], ctp: Map[String, String]): List[PrettyStackTraceElement] =
     val stacktracesInspector = StacktracesInspector(st, ctp)
-    TastyInspector.inspectTastyFiles(tastyFiles.map(_.file.toString))(stacktracesInspector)
+    val (tastys, jars) = tastyFiles.map(_.file.toPath.toString).partition(_.endsWith(".tasty"))
+    TastyInspector.inspectAllTastyFiles(tastys, jars, Nil)(stacktracesInspector)
     stacktracesInspector.prettyStackTraceElements.toList
 
 
@@ -45,8 +46,8 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
       case _ => ElementType.Method
           
     def createPrettyStackTraceElement(d: DefDef, lineNumber: Int)(using ste: StackTraceElement): PrettyStackTraceElement =
-      val nameWithoutPrefix = d.pos.sourceFile.jpath.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.0-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/") // TODO: Remove when stdlib will be shipped with tasty files!
-      PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix, lineNumber)
+      val nameWithoutPrefix = d.pos.sourceFile.getJPath.map(_.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.3-RC1-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/")) // TODO: Remove when stdlib will be shipped with tasty files!
+      PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix.getOrElse("<TODO: fix>"), lineNumber)
 
     def createErrorWhileBrowsingTastyFiles(error: PrettyErrors)(using ste: StackTraceElement): PrettyStackTraceElement =
       PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, error = Some(error))
@@ -152,7 +153,6 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
                 case defdefs =>
                   Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.Unknown))
        
-
     st.foreach { ste =>
       tastys.find(_.path.stripSuffix(".class") endsWith ctp(ste.getClassName)) match 
         case Some(tasty) =>
