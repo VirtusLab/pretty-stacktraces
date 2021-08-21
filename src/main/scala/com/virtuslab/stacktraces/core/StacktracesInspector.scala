@@ -86,10 +86,10 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
       val decoded = NameTransformer.decode(Names.termName(ste.getMethodName)).toString
       decoded match
         case d if d.contains("$anonfun$") =>
-          val lambdas = defdefs.filter(f => f.name == "$anonfun" && f.pos.endLine + 1 == ste.getLineNumber)
+          val lambdas = defdefs.filter(f => f.name == "$anonfun")
           lambdas match
             case head :: Nil =>
-              Some(createPrettyStackTraceElement(head, head.pos.startLine + 1))
+              Some(createPrettyStackTraceElement(head, ste.getLineNumber))
             case _ =>
               Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda))
         case d =>
