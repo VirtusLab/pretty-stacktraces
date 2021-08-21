@@ -19,16 +19,20 @@ inThisBuild(List(
   )
 ))
 
-val scala3Version = "3.0.0"
+val scala3Version = "3.1.0-RC1-bin-20210820-68044a6-NIGHTLY"
+val Examples = config("examples") extend Compile
 
 lazy val root = project
   .in(file("."))
+  .configs(Examples)
   .settings(
     organization := "org.virtuslab",
     name := "pretty-stacktraces",
 
     scalaVersion := scala3Version,
-
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
-    libraryDependencies += "org.scala-lang" %% "scala3-tasty-inspector" % scalaVersion.value
+    libraryDependencies += "org.scala-lang" %% "scala3-tasty-inspector" % scalaVersion.value,
+
+    inConfig(Examples)(Defaults.compileSettings),
+    Examples / sourceDirectory := baseDirectory.value / "src" / "examples",
   )
