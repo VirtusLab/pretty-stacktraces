@@ -3,9 +3,6 @@ package org.virtuslab.stacktraces.util
 import org.virtuslab.stacktraces.core.Stacktraces
 import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
-import org.junit.Test
-import org.junit.Assert._
-
 
 object TestExecutor:
   def executeTest(test: () => Unit) =

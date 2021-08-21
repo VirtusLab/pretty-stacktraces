@@ -4,9 +4,6 @@ import org.virtuslab.stacktraces.parser.StacktraceParser
 import org.virtuslab.stacktraces.core.Stacktraces
 import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
-import org.junit.Test
-import org.junit.Assert._
-
 val stacktraceRaw = """Test org.virtuslab.stacktraces.tests.BasicTest.nestedLambdas failed: java.lang.RuntimeException: error, took 0.002 sec
     at org.virtuslab.stacktraces.tests.BasicTest$package$.$bang(BasicTest.scala:23)
     at org.virtuslab.stacktraces.tests.BasicTest.$anonfun$1$$anonfun$1$$anonfun$1$$anonfun$1(BasicTest.scala:35)
@@ -31,9 +28,9 @@ val stacktraceRaw = """Test org.virtuslab.stacktraces.tests.BasicTest.nestedLamb
     at java.lang.reflect.Method.invoke(Method.java:566)
 """
 
-class StacktraceParserTest:
+object StacktraceParserTest:
 
-  @Test 
+  @main 
   def parserTest =
     val errorOrStacktrace = StacktraceParser.parse(stacktraceRaw)
     errorOrStacktrace match
