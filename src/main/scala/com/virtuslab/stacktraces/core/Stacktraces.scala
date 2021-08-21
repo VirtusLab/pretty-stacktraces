@@ -3,7 +3,6 @@ package org.virtuslab.stacktraces.core
 import org.virtuslab.stacktraces.model.ClasspathWrapper
 import org.virtuslab.stacktraces.model.TastyWrapper
 import org.virtuslab.stacktraces.model.PrettyException
-import org.virtuslab.stacktraces.model.PrettyStackTraceElement
 import org.virtuslab.stacktraces.model.ElementType
 import org.virtuslab.stacktraces.io.TastyFilesLocator
 
@@ -19,8 +18,8 @@ import java.nio.file.Paths
 
 object Stacktraces:
 
-  def convertToPrettyStackTrace(e: Throwable): PrettyException =
-    val tastyFilesLocator = TastyFilesLocator(Thread.currentThread().getContextClassLoader)
+  def convertToPrettyStackTrace(e: Throwable, additionalClasspath: Seq[String] = Nil): PrettyException =
+    val tastyFilesLocator = TastyFilesLocator(Thread.currentThread().getContextClassLoader, additionalClasspath)
     val st = filterInternalStackFrames(e.getStackTrace)
     val ctp = tastyFilesLocator.classNameToPath(st.map(_.getClassName))
     val tastyFiles = tastyFilesLocator.tastyFilesFromStackTrace(ctp)
@@ -31,4 +30,4 @@ object Stacktraces:
     st.sliding(2).toList.flatMap {
       case Array(fs, sc) =>
         if sc.getMethodName.contains("$adapted") then Nil else List(fs)
-    }
+    } :+ st.last

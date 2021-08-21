@@ -1,4 +1,5 @@
 package org.virtuslab.stacktraces
+package parser
 
 import org.virtuslab.stacktraces.parser.StacktraceParser
 import org.virtuslab.stacktraces.core.Stacktraces
@@ -36,7 +37,7 @@ object StacktraceParserTest:
     errorOrStacktrace match
       case Left(msg) => throw AssertionError(msg)
       case Right(stacktrace) =>
-        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(stacktrace)
+        val prettyStackTrace = convertToPrettyStackTraceWithStdlib(stacktrace)
         /*
          * This stacktrace is subject to Tasty files generated for BasicTest.scala, if you see some weird output, probably BasicTest.scala diverged.
          * Nonetheless, we can count test as passing correctly if it hits Right branch.

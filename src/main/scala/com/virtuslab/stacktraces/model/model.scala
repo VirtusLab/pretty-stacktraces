@@ -3,7 +3,7 @@ package org.virtuslab.stacktraces.model
 import java.io.File
 
 case class ClasspathWrapper(file: File, jarName: Option[String])
-case class TastyWrapper(file: File, jarName: Option[String])
+case class TastyWrapper(file: File, jar: Option[File])
 case class PrettyException(original: Throwable, prettyStackTrace: List[PrettyStackTraceElement])
 
 enum ElementType(val name: String):

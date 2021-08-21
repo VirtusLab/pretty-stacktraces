@@ -1,4 +1,4 @@
-package org.virtuslab.stacktraces.util
+package org.virtuslab.stacktraces
 
 import org.virtuslab.stacktraces.core.Stacktraces
 import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
@@ -10,5 +10,8 @@ object TestExecutor:
       test()
     catch
       case e: Exception =>
-        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(e)
+        val prettyStackTrace = convertToPrettyStackTraceWithStdlib(e)
         PrettyExceptionPrinter.printStacktrace(prettyStackTrace)
+
+def convertToPrettyStackTraceWithStdlib(e: Exception) =
+  Stacktraces.convertToPrettyStackTrace(e, Seq("scala-library_3-3.1.0-RC1-bin-SNAPSHOT.jar"))

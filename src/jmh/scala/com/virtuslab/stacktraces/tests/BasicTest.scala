@@ -1,8 +1,8 @@
 package org.virtuslab.stacktraces
+package tests
 
 import org.virtuslab.stacktraces.core.Stacktraces
 import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
-import org.virtuslab.stacktraces.util.TestExecutor
 
 
 trait A:
