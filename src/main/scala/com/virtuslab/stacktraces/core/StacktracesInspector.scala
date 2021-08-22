@@ -7,7 +7,6 @@ import org.virtuslab.stacktraces.model.PrettyErrors
 import org.virtuslab.stacktraces.io.TastyFilesLocator
 import org.virtuslab.stacktraces.tasty.TypesSupport
 
-
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names
 
@@ -83,18 +82,19 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
 
     end Traverser
 
-    def processDefDefs(defdefs: List[DefDef])(using ste: StackTraceElement): Option[PrettyStackTraceElement] =
+    def processDefDefs(defdefs: List[DefDef])(using lambdaUnraveler: LambdaUnraveler, ste: StackTraceElement): (Option[PrettyStackTraceElement], LambdaUnraveler) =
       val decoded = NameTransformer.decode(Names.termName(ste.getMethodName)).toString
       decoded match
         case d if d.contains("$anonfun$") =>
           val lambdas = defdefs.filter(f => f.name == "$anonfun")
-          lambdas match
-            case head :: Nil =>
-              Some(createPrettyStackTraceElement(head, ste.getLineNumber))
-            case _ =>
-              Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda))
+          val (defdef, newLambdaUnraveler) = lambdaUnraveler.getNextLambdaAndState(lambdas.asInstanceOf[List[lambdaUnraveler.q.reflect.DefDef]]) // cast needed becuase of imperfections of the type inference with dependent path types
+          defdef match
+            case Some(head) =>
+              (Some(createPrettyStackTraceElement(head.asInstanceOf[q.reflect.DefDef], ste.getLineNumber)), newLambdaUnraveler) // cast needed becuase of imperfections of the type inference with dependent path types
+            case None =>
+              (Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda)), newLambdaUnraveler)
         case d =>
-          defdefs.filter(_.name != "$anonfun") match
+          val pse = defdefs.filter(_.name != "$anonfun") match
             case Nil =>
               None
             case head :: Nil =>
@@ -106,17 +106,29 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
                   Some(createPrettyStackTraceElement(head, ste.getLineNumber))
                 case defdefs =>
                   Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.Unknown))
-       
-    st.foreach { ste =>
+          (pse, lambdaUnraveler)
+              
+    def processStackTrace(ste: StackTraceElement)(using LambdaUnraveler): LambdaUnraveler =
       tastys.find(_.path.stripSuffix(".class") endsWith ctp(ste.getClassName)) match 
         case Some(tasty) =>
           given StackTraceElement = ste
           val tree = tasty.ast
           val traverser = Traverser(ste)
           val defdefs = traverser.traverseTree(List.empty, tree)(tree.symbol)
-          processDefDefs(defdefs) match
+          val (pse, newLambdaUnraveler) = processDefDefs(defdefs)
+          pse match
             case Some(e) => prettyStackTraceElements += e
             case None => // do nothing
+          newLambdaUnraveler
         case None =>
           prettyStackTraceElements += PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, isTasty = false)
-    }
+          summon[LambdaUnraveler]
+    
+    def foreachStacktrace(st: List[StackTraceElement])(using LambdaUnraveler): Unit =
+      val ste :: tail = st
+      val newLambdaUnraveler = processStackTrace(ste)
+      tail match
+        case Nil => // do nothing
+        case _ => foreachStacktrace(tail)(using newLambdaUnraveler)
+
+    foreachStacktrace(st)(using LambdaUnraveler(q)(Nil))
