@@ -87,10 +87,10 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
       decoded match
         case d if d.contains("$anonfun$") =>
           val lambdas = defdefs.filter(f => f.name == "$anonfun")
-          val (defdef, newLambdaUnraveler) = lambdaUnraveler.getNextLambdaAndState(lambdas.asInstanceOf[List[lambdaUnraveler.q.reflect.DefDef]]) // cast needed becuase of imperfections of the type inference with dependent path types
+          val (defdef, newLambdaUnraveler) = lambdaUnraveler.getNextLambdaAndState(lambdas)
           defdef match
             case Some(head) =>
-              (Some(createPrettyStackTraceElement(head.asInstanceOf[q.reflect.DefDef], ste.getLineNumber)), newLambdaUnraveler) // cast needed becuase of imperfections of the type inference with dependent path types
+              (Some(createPrettyStackTraceElement(head, ste.getLineNumber)), newLambdaUnraveler)
             case None =>
               (Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda)), newLambdaUnraveler)
         case d =>
