@@ -50,93 +50,46 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
       PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix.getOrElse("<TODO: fix>"), lineNumber)
 
     def createErrorWhileBrowsingTastyFiles(error: PrettyErrors)(using ste: StackTraceElement): PrettyStackTraceElement =
-      PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getClassName, ste.getLineNumber, error = Some(error))
+      PrettyStackTraceElement(ste, ElementType.Method, ste.getMethodName, ste.getFileName, ste.getLineNumber, error = Some(error))
 
-    def walkInOrder(tree: Tree)(using ste: StackTraceElement): List[DefDef] =
-      if tree.pos.startLine < ste.getLineNumber then
-        visitTree(tree)
-      else 
-        Nil
-    
-    def visitTree(tree: Tree)(using ste: StackTraceElement): List[DefDef] =
-      tree match
-        case PackageClause(_, list) => 
-          list.flatMap(walkInOrder)
-        case Import(_, _) => 
-          Nil
-        case Export(_, _) =>
-          Nil
-        case ClassDef(_, _, _, _, list) => 
-          list.flatMap(walkInOrder)
-        case TypeDef(_, rhs) =>
-          walkInOrder(rhs)
-        case d @ DefDef(name, _, _, rhs) => 
-          val defdef = if d.pos.startLine + 1 <= ste.getLineNumber && d.pos.endLine + 1 >= ste.getLineNumber then
-            List(d)
-          else
+    class Traverser(ste: StackTraceElement) extends TreeAccumulator[List[DefDef]]:
+      def traverseTree(defdefs: List[DefDef], tree: Tree)(owner: Symbol): List[DefDef] = 
+        val defdef = tree match 
+          case d: DefDef => 
+            if d.pos.startLine + 1 <= ste.getLineNumber && d.pos.endLine + 1 >= ste.getLineNumber then
+              List(d)
+            else 
+              Nil
+          case tree =>
             Nil
-          defdef ++ rhs.fold(Nil)(walkInOrder)
-        case ValDef(_, _, rhs) => 
-          rhs.fold(Nil)(walkInOrder)
-        case Ident(_) =>
-          Nil
-        case Select(term, _) => 
-          walkInOrder(term)
-        case Literal(_) =>
-          Nil
-        case This(_) =>
-          Nil
-        case New(_) =>
-          Nil
-        case NamedArg(_, _) =>
-          Nil
-        case Apply(term, list) => 
-          walkInOrder(term) ++ list.flatMap(walkInOrder)
-        case TypeApply(term, _) => 
-          walkInOrder(term)
-        case Super(_, _) =>
-          Nil
-        case Typed(term, _) =>
-          walkInOrder(term)
-        case Assign(lhs, rhs) =>
-          walkInOrder(lhs) ++ walkInOrder(rhs)
-        case Block(list, term) => 
-          list.flatMap(walkInOrder) ++ walkInOrder(term)        
-        case Closure(term, _) =>
-          walkInOrder(term)
-        case If(a, b, c) =>
-          walkInOrder(a) ++ walkInOrder(b) ++ walkInOrder(c)
-        case Match(term, _) =>
-          walkInOrder(term)
-        case SummonFrom(_) =>
-          Nil       
-        case Try(tr, _, fin) => 
-          walkInOrder(tr) ++ fin.fold(Nil)(walkInOrder(_))
-        case Return(term, _) =>
-          walkInOrder(term)
-        case Repeated(list, _) => 
-          list.flatMap(walkInOrder)
-        case Inlined(_, _, body) =>
-          walkInOrder(body)
-        case SelectOuter(term, _, _) =>
-          walkInOrder(term)
-        case While(cond, body) =>
-          walkInOrder(cond) ++ walkInOrder(body)
-        case _: TypeTree =>
-          Nil
-        case x =>
-          println(s"Unmatched param: $x")
-          Nil
-    
+
+        // TODO: Remove when compiler will fix the issue https://github.com/lampepfl/dotty/issues/13352
+        val exists = try 
+          tree.pos.startLine
+          true
+        catch
+          case _ => 
+            false
+
+        if exists && tree.pos.startLine < ste.getLineNumber then 
+          traverseTreeChildren(defdefs ++ defdef, tree)(owner) 
+        else 
+          defdefs
+
+      def foldTree(defdefs: List[DefDef], tree: Tree)(owner: Symbol): List[DefDef] = traverseTree(defdefs, tree)(owner)
+
+      protected def traverseTreeChildren(defdefs: List[DefDef], tree: Tree)(owner: Symbol): List[DefDef] = foldOverTree(defdefs, tree)(owner)
+
+    end Traverser
 
     def processDefDefs(defdefs: List[DefDef])(using ste: StackTraceElement): Option[PrettyStackTraceElement] =
       val decoded = NameTransformer.decode(Names.termName(ste.getMethodName)).toString
       decoded match
         case d if d.contains("$anonfun$") =>
-          val lambdas = defdefs.filter(f => f.name == "$anonfun" && f.pos.endLine + 1 == ste.getLineNumber)
+          val lambdas = defdefs.filter(f => f.name == "$anonfun")
           lambdas match
             case head :: Nil =>
-              Some(createPrettyStackTraceElement(head, head.pos.startLine + 1))
+              Some(createPrettyStackTraceElement(head, ste.getLineNumber))
             case _ =>
               Some(createErrorWhileBrowsingTastyFiles(PrettyErrors.InlinedLambda))
         case d =>
@@ -158,7 +111,8 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
         case Some(tasty) =>
           given StackTraceElement = ste
           val tree = tasty.ast
-          val defdefs = walkInOrder(tree)
+          val traverser = Traverser(ste)
+          val defdefs = traverser.traverseTree(List.empty, tree)(tree.symbol)
           processDefDefs(defdefs) match
             case Some(e) => prettyStackTraceElements += e
             case None => // do nothing
