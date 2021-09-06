@@ -58,8 +58,60 @@ object BasicTests:
               rec(n)
         }
         x
-      rec(3, "ASD")
+      rec.apply(3, "ASD")
     } 
+
+  @main
+  def nestedLambdasRec2 = TestExecutor.executeTest { () =>
+    def rec(int: Int) =
+      throw new RuntimeException("abc")
+    rec.apply(3)
+  } 
+
+  @main
+  def nestedLambdasRec3 = TestExecutor.executeTest { () =>
+    def rec(int: String) =
+      List("asv").map { x =>
+        val aaa = 1 + 1
+        throw new RuntimeException("abc")
+        2 + 2
+      }
+    List(1).map { n =>
+      rec.apply("asd")
+    }
+  } 
+
+  @main
+  def nestedLambdasRec4 = TestExecutor.executeTest { () =>
+    def rec(int: String) =
+      throw new RuntimeException("abc")
+    List(1).map { n =>
+      rec.apply("asd")
+    }
+  } 
+
+  @main
+  def nestedLambdasRec5 = TestExecutor.executeTest { () =>
+    def rec(int: String) =
+      throw new RuntimeException("abc")
+    List(1).map(n => {List(1).map(_ => 1.3); rec.apply("asd")})
+  } 
+
+  @main
+  def nestedLambdasRec6 = TestExecutor.executeTest { () =>
+    def rec(int: String) =
+      throw new RuntimeException("abc")
+    List(1).map(n => {List(1).map(_ => 1.3); List("xd").map(rec)})
+  } 
+
+  @main
+  def nestedLambdasRec7 = TestExecutor.executeTest { () =>
+    List(1).map { n =>
+      List("xd").map { m =>
+        throw new RuntimeException("xyz")
+      }
+    }
+  } 
 
   @main 
   def BdoSth = 
