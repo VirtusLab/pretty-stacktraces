@@ -37,6 +37,30 @@ object BasicTests:
       val z = 1
     } 
 
+  @main
+  def nestedLambdasRec = TestExecutor.executeTest { () =>
+      def rec(int: Int, string: String): IterableOnce[Any] =
+        val y = 1
+        val x = (0 to 10).flatMap { 
+          n => 
+            if int == 1 then
+              throw new RuntimeException("abc")
+            else if int > 0 then
+              rec(int - 1, "ASD")
+            else
+              def rec(n: Int): IterableOnce[Any] = List(n).map { 
+                n => (if n > 5 then List(true) else List(false)).flatMap {
+                  n => (if n then List("0") else List("5")).map { n => 
+                    22
+                  }
+                }
+              } 
+              rec(n)
+        }
+        x
+      rec(3, "ASD")
+    } 
+
   @main 
   def BdoSth = 
     TestExecutor.executeTest(() => B().doSth)
