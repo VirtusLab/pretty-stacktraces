@@ -23,8 +23,9 @@ import org.virtuslab.stacktraces.model.TastyWrapper
 object StacktracesInspector:
   def inspectStackTrace(st: List[StackTraceElement], tastyFiles: List[TastyWrapper], ctp: Map[String, String]): List[PrettyStackTraceElement] =
     val stacktracesInspector = StacktracesInspector(st, ctp)
-    val (tastys, jars) = tastyFiles.map(_.file.toPath.toString).partition(_.endsWith(".tasty"))
-    TastyInspector.inspectAllTastyFiles(tastys, jars, Nil)(stacktracesInspector)
+    val tastys = tastyFiles.map(_.file.toPath.toString)
+    val dependencies = tastyFiles.flatMap(_.jar).map(_.toPath.toString)
+    TastyInspector.inspectAllTastyFiles(tastys, Nil, dependencies)(stacktracesInspector)
     stacktracesInspector.prettyStackTraceElements.toList
 
 
