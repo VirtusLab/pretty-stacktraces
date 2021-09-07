@@ -106,7 +106,7 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
                 case head :: Nil =>
                   (Some(createPrettyStackTraceElement(head, ste.getLineNumber)), lambdaUnraveler)
                 case _ =>
-                  val extraSuffix = """(.*)\$(\d)""".r
+                  val extraSuffix = """(.*)\$(\d*)""".r
                   decoded match
                     case extraSuffix(name, suffix) =>
                       processDefDefs(defdefs, Some(name))
