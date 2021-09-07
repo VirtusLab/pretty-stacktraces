@@ -8,8 +8,8 @@ import Console.RESET
 
 object PrettyExceptionPrinter:
 
-  def printStacktrace(pe: PrettyException, withJarName: Boolean = false): Unit =
-    val pst = prettyStackTrace {
+  def prettyStacktrace(pe: PrettyException, withJarName: Boolean = false): PrettyStackTrace =
+    prettyStackTrace {
       addWithColor(LIGHT_ORANGE)(s"Exception in thread ${Thread.currentThread.getName}: ")
       addWithColor(RED)(s"${pe.original.getClass.getName}: ${pe.original.getMessage}")
       add("\n")
@@ -53,4 +53,7 @@ object PrettyExceptionPrinter:
         add(s" - ${er.msg}")
       }
     }
+
+  def printStacktrace(pe: PrettyException, withJarName: Boolean = false): Unit =
+    val pst = prettyStacktrace(pe, withJarName)
     println(pst.build)
