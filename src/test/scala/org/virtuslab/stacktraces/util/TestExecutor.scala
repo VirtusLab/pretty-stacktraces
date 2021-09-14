@@ -6,6 +6,7 @@ import org.virtuslab.stacktraces.core.Stacktraces
 import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 import java.nio.file.Paths
@@ -16,6 +17,8 @@ trait TestExecutor:
 
   @Test
   final def executeTest =
+    // Enable test only on JDK 11
+    assumeTrue(System.getProperty("java.version").startsWith("11."))
 
     val className = this.getClass.getName.split("\\.")
     val expected = Source.fromResource(Paths.get(className.head, className.tail*).toString).mkString

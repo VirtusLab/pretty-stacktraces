@@ -7,6 +7,7 @@ import org.virtuslab.stacktraces.printer.PrettyExceptionPrinter
 
 import org.junit.Test
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 
 val stacktraceRaw = """Test org.virtuslab.stacktraces.parser.TestInput.test failed: java.lang.RuntimeException: TestInput, took 0.004 sec
     at org.virtuslab.stacktraces.parser.TestInput$package$.$bang(TestInput.scala:7)
@@ -52,6 +53,7 @@ class StacktraceParserTest:
  
   @Test
   def parserTest =
+    assumeTrue(System.getProperty("java.version").startsWith("11."))
     val errorOrStacktrace = StacktraceParser.parse(stacktraceRaw)
     errorOrStacktrace match
       case Left(msg) => throw AssertionError(msg)

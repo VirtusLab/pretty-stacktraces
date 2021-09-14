@@ -3,7 +3,7 @@ java.lang.RuntimeException: NestedLambdasRec5
     at lambda (String) => Nothing of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:65 
     at method map in scala/collection/immutable/List.scala:246 
     at lambda (Int) => Double of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:65 
-    at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:24 
+    at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
     at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:61 
     at method invoke0 in jdk.internal.reflect.NativeMethodAccessorImpl:(Native method) 
     at method invoke in jdk.internal.reflect.NativeMethodAccessorImpl:62 

@@ -11,7 +11,7 @@ java.lang.RuntimeException: NestedLambdas
     at method flatMap in scala/collection/StrictOptimizedIterableOps.scala:104 
     at method <init> in scala/collection/immutable/Range.scala:59 
     at lambda () => Unit of test in src/test/scala/org/virtuslab/stacktraces/tests/NestedLambdasTests.scala:25 
-    at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:24 
+    at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
     at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/NestedLambdasTests.scala:17 
     at method invoke0 in jdk.internal.reflect.NativeMethodAccessorImpl:(Native method) 
     at method invoke in jdk.internal.reflect.NativeMethodAccessorImpl:62 
