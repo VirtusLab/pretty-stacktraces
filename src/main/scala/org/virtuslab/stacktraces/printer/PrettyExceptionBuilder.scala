@@ -11,9 +11,9 @@ val LIGHT_PURPLE = "\u001b[38;5;141m"
 val GRAY = "\u001b[38;5;248m"
 
 class PrettyStackTrace:
-    val stackTraceBuilder = new StringBuilder
-    def build = stackTraceBuilder.toString
-    def ++=(s: String): Unit = stackTraceBuilder ++= s
+  val stackTraceBuilder = new StringBuilder
+  def build = stackTraceBuilder.toString
+  def ++=(s: String): Unit = stackTraceBuilder ++= s
 
 def prettyStackTrace(init: PrettyStackTrace ?=> Unit): PrettyStackTrace =
   given p: PrettyStackTrace = PrettyStackTrace()
