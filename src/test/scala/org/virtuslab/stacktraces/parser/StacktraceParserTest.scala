@@ -58,7 +58,7 @@ class StacktraceParserTest:
     errorOrStacktrace match
       case Left(msg) => throw AssertionError(msg)
       case Right(stacktrace) =>
-        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(stacktrace, Seq("scala-library_3-3.1.0-RC1-bin-SNAPSHOT.jar"))
+        val prettyStackTrace = Stacktraces.convertToPrettyStackTrace(stacktrace, Seq("scala-library_3-3.1.0-bin-SNAPSHOT.jar"))
         /*
          * This stacktrace is subject to Tasty files generated for TestInput.scala, if you see some weird output, probably TestInput.scala diverged.
          */

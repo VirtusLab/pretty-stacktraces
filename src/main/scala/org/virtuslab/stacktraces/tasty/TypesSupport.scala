@@ -19,18 +19,6 @@ class TypesSupport(val qctx: Quotes):
       case tpeTree: TypeTree => inner(tpeTree.tpe)
       case term:  Term => inner(term.tpe)
 
-  // extension (tpe: TypeRepr)
-  //   def asSignature: String = inner(tpe)
-
-  extension (t: TypeRepr)
-    def isTupleType: Boolean = hackIsTupleType(using qctx)(t)
-
-    def hackIsTupleType(using Quotes)(rtpe: qctx.reflect.TypeRepr): Boolean =
-      import dotty.tools.dotc
-      given ctx: dotc.core.Contexts.Context = qctx.asInstanceOf[scala.quoted.runtime.impl.QuotesImpl].ctx
-      val tpe = rtpe.asInstanceOf[dotc.core.Types.Type]
-      ctx.definitions.isTupleType(tpe)
-
   private def text(str: String): String = str
 
   private def texts(str: String): String = text(str)
@@ -161,7 +149,7 @@ class TypesSupport(val qctx: Quotes):
               partOfSignature ++ texts(" => ") ++ inner(rtpe)
             case args =>
               texts("(") ++ commas(args.init.map(inner)) ++ texts(") => ") ++ inner(args.last)
-        else if t.isTupleType then
+        else if t.isTupleN then
           typeList match
             case Nil =>
               ""
