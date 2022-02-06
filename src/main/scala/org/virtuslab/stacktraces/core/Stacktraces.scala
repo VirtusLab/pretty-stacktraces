@@ -5,6 +5,7 @@ import org.virtuslab.stacktraces.model.TastyWrapper
 import org.virtuslab.stacktraces.model.PrettyException
 import org.virtuslab.stacktraces.model.ElementType
 import org.virtuslab.stacktraces.io.TastyFilesLocator
+import org.virtuslab.stacktraces.transform.StacktracesCompresser
 
 import dotty.tools.dotc.util.NameTransformer
 import dotty.tools.dotc.core.Names
@@ -24,7 +25,8 @@ object Stacktraces:
     val ctp = tastyFilesLocator.classNameToPath(st.map(_.getClassName))
     val tastyFiles = tastyFilesLocator.tastyFilesFromStackTrace(ctp)
     val pst = StacktracesInspector.inspectStackTrace(st, tastyFiles, ctp)
-    PrettyException(e, pst)
+    val wrapped = StacktracesCompresser.compressStackTrace(pst)
+    PrettyException(e, wrapped)
 
   private def filterInternalStackFrames(st: Array[StackTraceElement]): List[StackTraceElement] =
     st.sliding(2).toList.flatMap {

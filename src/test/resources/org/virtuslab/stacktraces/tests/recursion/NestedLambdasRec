@@ -1,19 +1,9 @@
 java.lang.RuntimeException: NestedLambdasRec
-    at lambda (Int) => IterableOnce[Any] of x in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
-    at method strictOptimizedFlatMap in scala/collection/StrictOptimizedIterableOps.scala:117 
-    at method flatMap in scala/collection/StrictOptimizedIterableOps.scala:104 
-    at method <init> in scala/collection/immutable/Range.scala:59 
-    at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
-    at lambda (Int) => IterableOnce[Any] of x in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
-    at method strictOptimizedFlatMap in scala/collection/StrictOptimizedIterableOps.scala:117 
-    at method flatMap in scala/collection/StrictOptimizedIterableOps.scala:104 
-    at method <init> in scala/collection/immutable/Range.scala:59 
-    at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
-    at lambda (Int) => IterableOnce[Any] of x in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
-    at method strictOptimizedFlatMap in scala/collection/StrictOptimizedIterableOps.scala:117 
-    at method flatMap in scala/collection/StrictOptimizedIterableOps.scala:104 
-    at method <init> in scala/collection/immutable/Range.scala:59 
-    at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
+3 | at lambda (Int) => IterableOnce[Any] of x in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
+  | at method strictOptimizedFlatMap in scala/collection/StrictOptimizedIterableOps.scala:117 
+  | at method flatMap in scala/collection/StrictOptimizedIterableOps.scala:104 
+  | at method <init> in scala/collection/immutable/Range.scala:59 
+  | at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:26 
     at lambda (Int, String) => IterableOnce[Any] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:29 
     at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
     at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:8 
@@ -49,10 +39,10 @@ java.lang.RuntimeException: NestedLambdasRec
     at method run in sbt.TestRunner:155 
     at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
     at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:278 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
+2 | at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
     at method apply in sbt.TestFunction:330 
-    at method $anonfun$toTask$1 in sbt.Tests$:435 
+    at method processRunnable$1 in sbt.Tests$:474 
+    at method $anonfun$makeSerial$1 in sbt.Tests$:480 
     at method $anonfun$apply$2 in sbt.std.Transform$$anon$3:46 
     at method work in sbt.std.Transform$$anon$4:68 
     at method $anonfun$submit$2 in sbt.Execute:282 

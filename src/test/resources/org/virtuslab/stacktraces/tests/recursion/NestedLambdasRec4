@@ -37,10 +37,10 @@ java.lang.RuntimeException: NestedLambdasRec4
     at method run in sbt.TestRunner:155 
     at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
     at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:278 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
+2 | at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
     at method apply in sbt.TestFunction:330 
-    at method $anonfun$toTask$1 in sbt.Tests$:435 
+    at method processRunnable$1 in sbt.Tests$:474 
+    at method $anonfun$makeSerial$1 in sbt.Tests$:480 
     at method $anonfun$apply$2 in sbt.std.Transform$$anon$3:46 
     at method work in sbt.std.Transform$$anon$4:68 
     at method $anonfun$submit$2 in sbt.Execute:282 
