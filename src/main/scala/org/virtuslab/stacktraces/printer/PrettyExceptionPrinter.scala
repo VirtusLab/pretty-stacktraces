@@ -10,21 +10,26 @@ import Console.RESET
 
 object PrettyExceptionPrinter:
 
+  private def countStrSize(count: Int): Int =
+    if count <= 1 then
+      0
+    else
+      count.toString.size + 4
+
   def prettyStacktrace(pe: PrettyException, withJarName: Boolean = false): PrettyStackTrace =
     prettyStackTrace {
       addWithColor(LIGHT_ORANGE)(s"Exception in thread ${Thread.currentThread.getName}: ")
       addWithColor(RED)(s"${pe.original.getClass.getName}: ${pe.original.getMessage}")
       add("\n")
       val errors = pe.prettyStackTrace.flatMap(_._2.flatMap(_.error)).distinct
-      val tabSize = max(pe.prettyStackTrace.map(_._1.toString.size + 3).maxOption.getOrElse(0), 4)
+      val tabSize = max(pe.prettyStackTrace.map((count, _) => countStrSize(count)).maxOption.getOrElse(0), 4)
       pe.prettyStackTrace
         .foreach {
           case (count, frame) =>
             val (firstStr, nextStr) =
               if count > 1 then
-                val countStr = s"$count | "
-                val firstStr = s"$count | " + " " * (tabSize - countStr.size)
-                val nextStr = " " * count.toString.size + " | " + " " * (tabSize - count.toString.size - 3)
+                val firstStr = count.toString + "x" + " " * (tabSize - count.toString.size - 4) + " | "
+                val nextStr = " " * (tabSize - 3) + " | "
                 firstStr -> nextStr
               else
                 val str = " " * tabSize

@@ -91,3 +91,51 @@ class NestedLambdasRec8 extends TestExecutor:
       }
       1
     rec(3)
+
+class ALotOfRecursiveCalls extends TestExecutor: 
+  override val test = () => 
+    def rec(i: Int): Int =
+      if i <= 0 then
+        rec1(23)
+      else
+        i + rec(i - 1)
+    def rec1(i: Int): Int =
+      if i <= 0 then
+        rec2(5)
+      else
+        i + rec1(i - 1)
+    def rec2(i: Int): Int =
+      if i <= 0 then
+        throw new RuntimeException("ALotOfRecursiveCalls")
+      else
+        i + rec2(i - 1)
+    rec(120)
+
+class ALotOfRecursiveCalls2 extends TestExecutor: 
+  override val test = () => 
+    def rec(i: Int): Int =
+      if i <= 0 then
+        rec3(23)
+      else
+        i + rec1(i - 1)
+    def rec1(i: Int): Int =
+      if i <= 0 then
+        rec3(23)
+      else
+        i + rec2(i - 1)
+    def rec2(i: Int): Int =
+      if i <= 0 then
+        rec3(23)
+      else
+        i + rec(i - 1)
+    def rec3(i: Int): Int =
+      if i <= 0 then
+        rec4(5)
+      else
+        i + rec3(i - 1)
+    def rec4(i: Int): Int =
+      if i <= 0 then
+        throw new RuntimeException("ALotOfRecursiveCalls2")
+      else
+        i + rec4(i - 1)
+    rec(120)

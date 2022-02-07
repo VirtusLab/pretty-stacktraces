@@ -1,2 +1,2 @@
 java.lang.StackOverflowError: null
-1024 | at method factorial in src/test/scala/org/virtuslab/stacktraces/tests/StackOverflowTests.scala:14 
+1024x | at method factorial in src/test/scala/org/virtuslab/stacktraces/tests/StackOverflowTests.scala:14 
