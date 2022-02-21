@@ -26,9 +26,9 @@ trait TestExecutor:
     try
       test()
     catch
-      case e: Exception =>
+      case e: Throwable =>
         val prettyStackTrace = convertToPrettyStackTraceWithStdlib(e)
         assertTrue(PrettyExceptionPrinter.prettyStacktrace(prettyStackTrace).build.replaceAll("\u001b\\[[;\\d]*m", "").endsWith(expected))
 
-  private def convertToPrettyStackTraceWithStdlib(e: Exception) =
+  private def convertToPrettyStackTraceWithStdlib(e: Throwable) =
     Stacktraces.convertToPrettyStackTrace(e, Seq("scala-library_3-3.1.0-RC1-bin-SNAPSHOT.jar"))

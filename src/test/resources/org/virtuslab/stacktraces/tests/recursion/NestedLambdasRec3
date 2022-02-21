@@ -1,59 +1,59 @@
 java.lang.RuntimeException: NestedLambdasRec3
-    at lambda (String) => Int of rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:44 
-    at method map in scala/collection/immutable/List.scala:246 
-    at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:45 
-    at lambda (String) => List[Int] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:48 
-    at method map in scala/collection/immutable/List.scala:246 
-    at lambda (Int) => List[Int] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:48 
-    at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
-    at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:39 
-    at method invoke0 in jdk.internal.reflect.NativeMethodAccessorImpl:(Native method) 
-    at method invoke in jdk.internal.reflect.NativeMethodAccessorImpl:62 
-    at method invoke in jdk.internal.reflect.DelegatingMethodAccessorImpl:43 
-    at method invoke in java.lang.reflect.Method:566 
-    at method runReflectiveCall in org.junit.runners.model.FrameworkMethod$1:47 
-    at method run in org.junit.internal.runners.model.ReflectiveCallable:12 
-    at method invokeExplosively in org.junit.runners.model.FrameworkMethod:44 
-    at method evaluate in org.junit.internal.runners.statements.InvokeMethod:17 
-    at method runLeaf in org.junit.runners.ParentRunner:271 
-    at method runChild in org.junit.runners.BlockJUnit4ClassRunner:70 
-    at method runChild in org.junit.runners.BlockJUnit4ClassRunner:50 
-    at method run in org.junit.runners.ParentRunner$3:238 
-    at method schedule in org.junit.runners.ParentRunner$1:63 
-    at method runChildren in org.junit.runners.ParentRunner:236 
-    at method access$000 in org.junit.runners.ParentRunner:53 
-    at method evaluate in org.junit.runners.ParentRunner$2:229 
-    at method run in org.junit.runners.ParentRunner:309 
-    at method runChild in org.junit.runners.Suite:127 
-    at method runChild in org.junit.runners.Suite:26 
-    at method run in org.junit.runners.ParentRunner$3:238 
-    at method schedule in org.junit.runners.ParentRunner$1:63 
-    at method runChildren in org.junit.runners.ParentRunner:236 
-    at method access$000 in org.junit.runners.ParentRunner:53 
-    at method evaluate in org.junit.runners.ParentRunner$2:229 
-    at method run in org.junit.runners.ParentRunner:309 
-    at method run in org.junit.runner.JUnitCore:160 
-    at method run in org.junit.runner.JUnitCore:138 
-    at method execute in com.novocode.junit.JUnitRunner$1:132 
-    at method runTest$1 in sbt.TestRunner:140 
-    at method run in sbt.TestRunner:155 
-    at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-    at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:278 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-    at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-    at method apply in sbt.TestFunction:330 
-    at method $anonfun$toTask$1 in sbt.Tests$:435 
-    at method $anonfun$apply$2 in sbt.std.Transform$$anon$3:46 
-    at method work in sbt.std.Transform$$anon$4:68 
-    at method $anonfun$submit$2 in sbt.Execute:282 
-    at method wideConvert in sbt.internal.util.ErrorHandling$:23 
-    at method work in sbt.Execute:291 
-    at method $anonfun$submit$1 in sbt.Execute:282 
-    at method $anonfun$submitValid$1 in sbt.ConcurrentRestrictions$$anon$4:265 
-    at method call in sbt.CompletionService$$anon$2:64 
-    at method run in java.util.concurrent.FutureTask:264 
-    at method call in java.util.concurrent.Executors$RunnableAdapter:515 
-    at method run in java.util.concurrent.FutureTask:264 
-    at method runWorker in java.util.concurrent.ThreadPoolExecutor:1128 
-    at method run in java.util.concurrent.ThreadPoolExecutor$Worker:628 
-    at method run in java.lang.Thread:829 
+     at lambda (String) => Int of rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:44 
+     at method map in scala/collection/immutable/List.scala:246 
+     at method rec in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:45 
+     at lambda (String) => List[Int] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:48 
+     at method map in scala/collection/immutable/List.scala:246 
+     at lambda (Int) => List[Int] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:48 
+     at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
+     at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:39 
+     at method invoke0 in jdk.internal.reflect.NativeMethodAccessorImpl:(Native method) 
+     at method invoke in jdk.internal.reflect.NativeMethodAccessorImpl:62 
+     at method invoke in jdk.internal.reflect.DelegatingMethodAccessorImpl:43 
+     at method invoke in java.lang.reflect.Method:566 
+     at method runReflectiveCall in org.junit.runners.model.FrameworkMethod$1:47 
+     at method run in org.junit.internal.runners.model.ReflectiveCallable:12 
+     at method invokeExplosively in org.junit.runners.model.FrameworkMethod:44 
+     at method evaluate in org.junit.internal.runners.statements.InvokeMethod:17 
+     at method runLeaf in org.junit.runners.ParentRunner:271 
+     at method runChild in org.junit.runners.BlockJUnit4ClassRunner:70 
+     at method runChild in org.junit.runners.BlockJUnit4ClassRunner:50 
+     at method run in org.junit.runners.ParentRunner$3:238 
+     at method schedule in org.junit.runners.ParentRunner$1:63 
+     at method runChildren in org.junit.runners.ParentRunner:236 
+     at method access$000 in org.junit.runners.ParentRunner:53 
+     at method evaluate in org.junit.runners.ParentRunner$2:229 
+     at method run in org.junit.runners.ParentRunner:309 
+     at method runChild in org.junit.runners.Suite:127 
+     at method runChild in org.junit.runners.Suite:26 
+     at method run in org.junit.runners.ParentRunner$3:238 
+     at method schedule in org.junit.runners.ParentRunner$1:63 
+     at method runChildren in org.junit.runners.ParentRunner:236 
+     at method access$000 in org.junit.runners.ParentRunner:53 
+     at method evaluate in org.junit.runners.ParentRunner$2:229 
+     at method run in org.junit.runners.ParentRunner:309 
+     at method run in org.junit.runner.JUnitCore:160 
+     at method run in org.junit.runner.JUnitCore:138 
+     at method execute in com.novocode.junit.JUnitRunner$1:132 
+     at method runTest$1 in sbt.TestRunner:140 
+     at method run in sbt.TestRunner:155 
+     at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
+     at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:278 
+2x | at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
+     at method apply in sbt.TestFunction:330 
+     at method processRunnable$1 in sbt.Tests$:474 
+     at method $anonfun$makeSerial$1 in sbt.Tests$:480 
+     at method $anonfun$apply$2 in sbt.std.Transform$$anon$3:46 
+     at method work in sbt.std.Transform$$anon$4:68 
+     at method $anonfun$submit$2 in sbt.Execute:282 
+     at method wideConvert in sbt.internal.util.ErrorHandling$:23 
+     at method work in sbt.Execute:291 
+     at method $anonfun$submit$1 in sbt.Execute:282 
+     at method $anonfun$submitValid$1 in sbt.ConcurrentRestrictions$$anon$4:265 
+     at method call in sbt.CompletionService$$anon$2:64 
+     at method run in java.util.concurrent.FutureTask:264 
+     at method call in java.util.concurrent.Executors$RunnableAdapter:515 
+     at method run in java.util.concurrent.FutureTask:264 
+     at method runWorker in java.util.concurrent.ThreadPoolExecutor:1128 
+     at method run in java.util.concurrent.ThreadPoolExecutor$Worker:628 
+     at method run in java.lang.Thread:829 
