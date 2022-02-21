@@ -2,6 +2,7 @@ package org.virtuslab.stacktraces.transform
 
 import org.virtuslab.stacktraces.model._
 
+import scala.annotation.tailrec
 import scala.util.chaining._
 
 object StacktracesCompresser:
@@ -15,6 +16,7 @@ object StacktracesCompresser:
       case p => List(p)
     }
 
+  @tailrec
   private def goCompress(
     left: List[PrettyStackTraceElement],
     lastPartCount: Int = 1,
