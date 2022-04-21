@@ -7,10 +7,8 @@ java.lang.RuntimeException: NestedLambdasRec6
      at lambda (Int) => List[Nothing] of some outer lambda in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:72 
      at method executeTest in src/test/scala/org/virtuslab/stacktraces/util/TestExecutor.scala:27 
      at method <init> in src/test/scala/org/virtuslab/stacktraces/tests/RecursionTests.scala:68 
-     at method invoke0 in jdk.internal.reflect.NativeMethodAccessorImpl:(Native method) 
-     at method invoke in jdk.internal.reflect.NativeMethodAccessorImpl:62 
-     at method invoke in jdk.internal.reflect.DelegatingMethodAccessorImpl:43 
-     at method invoke in java.lang.reflect.Method:566 
+     at method invoke in jdk.internal.reflect.DirectMethodHandleAccessor:104 
+     at method invoke in java.lang.reflect.Method:577 
      at method runReflectiveCall in org.junit.runners.model.FrameworkMethod$1:47 
      at method run in org.junit.internal.runners.model.ReflectiveCallable:12 
      at method invokeExplosively in org.junit.runners.model.FrameworkMethod:44 
@@ -35,12 +33,12 @@ java.lang.RuntimeException: NestedLambdasRec6
      at method run in org.junit.runner.JUnitCore:160 
      at method run in org.junit.runner.JUnitCore:138 
      at method execute in com.novocode.junit.JUnitRunner$1:132 
-     at method runTest$1 in sbt.TestRunner:140 
-     at method run in sbt.TestRunner:155 
-     at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-     at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:278 
-2x | at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:318 
-     at method apply in sbt.TestFunction:330 
+     at method runTest$1 in sbt.TestRunner:146 
+     at method run in sbt.TestRunner:161 
+     at method $anonfun$apply$1 in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:324 
+     at method sbt$TestFramework$$withContextLoader in sbt.TestFramework$:284 
+2x | at method apply in sbt.TestFramework$$anon$3$$anonfun$$lessinit$greater$1:324 
+     at method apply in sbt.TestFunction:336 
      at method processRunnable$1 in sbt.Tests$:474 
      at method $anonfun$makeSerial$1 in sbt.Tests$:480 
      at method $anonfun$apply$2 in sbt.std.Transform$$anon$3:46 
@@ -52,8 +50,8 @@ java.lang.RuntimeException: NestedLambdasRec6
      at method $anonfun$submitValid$1 in sbt.ConcurrentRestrictions$$anon$4:265 
      at method call in sbt.CompletionService$$anon$2:64 
      at method run in java.util.concurrent.FutureTask:264 
-     at method call in java.util.concurrent.Executors$RunnableAdapter:515 
+     at method call in java.util.concurrent.Executors$RunnableAdapter:539 
      at method run in java.util.concurrent.FutureTask:264 
-     at method runWorker in java.util.concurrent.ThreadPoolExecutor:1128 
-     at method run in java.util.concurrent.ThreadPoolExecutor$Worker:628 
-     at method run in java.lang.Thread:829 
+     at method runWorker in java.util.concurrent.ThreadPoolExecutor:1136 
+     at method run in java.util.concurrent.ThreadPoolExecutor$Worker:635 
+     at method run in java.lang.Thread:833 

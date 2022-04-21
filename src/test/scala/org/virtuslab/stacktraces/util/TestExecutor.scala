@@ -31,4 +31,4 @@ trait TestExecutor:
         assertTrue(PrettyExceptionPrinter.prettyStacktrace(prettyStackTrace).build.replaceAll("\u001b\\[[;\\d]*m", "").endsWith(expected))
 
   private def convertToPrettyStackTraceWithStdlib(e: Throwable) =
-    Stacktraces.convertToPrettyStackTrace(e, Seq("scala-library_3-3.1.0-RC1-bin-SNAPSHOT.jar"))
+    Stacktraces.convertToPrettyStackTrace(e, Seq("scala-library_3-3.1.3-RC2-bin-SNAPSHOT.jar"))

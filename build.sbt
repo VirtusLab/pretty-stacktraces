@@ -25,7 +25,7 @@ ThisBuild / parallelExecution := false
 
 Global / excludeLintKeys += ThisBuild / organization
 
-val scala3Version = "3.1.0"
+val scala3Version = "3.1.3-RC2"
 
 lazy val root = project
   .in(file("."))
