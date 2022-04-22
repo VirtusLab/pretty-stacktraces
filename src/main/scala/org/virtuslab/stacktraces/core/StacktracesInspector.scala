@@ -63,20 +63,8 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
           case tree =>
             Nil
 
-        // TODO: Remove when compiler will fix the issue https://github.com/lampepfl/dotty/issues/13352
-        val exists = try 
-          tree.pos.startLine
-          true
-        catch
-          case _ => 
-            false
-
-        if exists && tree.pos.startLine < ste.getLineNumber then 
-          try
-            foldOverTree(defdefs ++ defdef, tree)(owner)
-          catch
-            case e: scala.MatchError =>
-              defdefs
+        if tree.pos.startLine < ste.getLineNumber then 
+          foldOverTree(defdefs ++ defdef, tree)(owner)
         else 
           defdefs
     end Traverser
