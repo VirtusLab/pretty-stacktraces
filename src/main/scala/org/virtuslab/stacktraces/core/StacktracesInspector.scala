@@ -46,7 +46,7 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
       case _ => ElementType.Method
           
     def createPrettyStackTraceElement(d: DefDef, lineNumber: Int)(using ste: StackTraceElement): PrettyStackTraceElement =
-      val nameWithoutPrefix = d.pos.sourceFile.getJPath.map(_.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.0.3-RC1-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/")) // TODO: Remove when stdlib will be shipped with tasty files!
+      val nameWithoutPrefix = d.pos.sourceFile.getJPath.map(_.toString.stripPrefix("out/bootstrap/stdlib-bootstrapped/scala-3.1.3-RC2-bin-SNAPSHOT-nonbootstrapped/src_managed/main/scala-library-src/")) // TODO: Remove when stdlib will be shipped with tasty files!
       PrettyStackTraceElement(ste, label(d), d.name, nameWithoutPrefix.getOrElse("<TODO: fix>"), lineNumber)
 
     def createErrorWhileBrowsingTastyFiles(error: PrettyErrors)(using ste: StackTraceElement): PrettyStackTraceElement =
@@ -63,15 +63,7 @@ class StacktracesInspector private (st: List[StackTraceElement], ctp: Map[String
           case tree =>
             Nil
 
-        // TODO: Remove when compiler will fix the issue https://github.com/lampepfl/dotty/issues/13352
-        val exists = try 
-          tree.pos.startLine
-          true
-        catch
-          case _ => 
-            false
-
-        if exists && tree.pos.startLine < ste.getLineNumber then 
+        if tree.pos.startLine < ste.getLineNumber then 
           foldOverTree(defdefs ++ defdef, tree)(owner)
         else 
           defdefs
